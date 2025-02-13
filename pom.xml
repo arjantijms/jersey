@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2010, 2024 Oracle and/or its affiliates. All rights reserved.
+    Copyright (c) 2010, 2025 Oracle and/or its affiliates. All rights reserved.
 
     This program and the accompanying materials are made available under the
     terms of the Eclipse Public License v. 2.0, which is available at
@@ -579,6 +579,7 @@
                         <configLocation>etc/config/checkstyle.xml</configLocation>
                         <suppressionsLocation>etc/config/checkstyle-suppressions.xml</suppressionsLocation>
                         <outputFile>${project.build.directory}/checkstyle/checkstyle-result.xml</outputFile>
+                        <excludes>**/module-info.java</excludes>
                     </configuration>
                     <dependencies>
                         <dependency>
@@ -2177,7 +2178,7 @@
         <install.mvn.plugin.version>3.1.2</install.mvn.plugin.version>
         <istack.mvn.plugin.version>4.2.0</istack.mvn.plugin.version>
         <jar.mvn.plugin.version>3.4.2</jar.mvn.plugin.version>
-        <javadoc.mvn.plugin.version>3.8.0</javadoc.mvn.plugin.version>
+        <javadoc.mvn.plugin.version>3.11.2</javadoc.mvn.plugin.version>
         <jxr.mvn.plugin.version>3.4.0</jxr.mvn.plugin.version>
         <paxexam.mvn.plugin.version>1.2.4</paxexam.mvn.plugin.version>
         <project.info.reports.mvn.plugin.version>3.6.2</project.info.reports.mvn.plugin.version>
