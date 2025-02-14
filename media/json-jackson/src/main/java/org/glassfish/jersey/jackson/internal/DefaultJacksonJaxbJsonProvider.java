@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, 2024 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -18,6 +18,7 @@ package org.glassfish.jersey.jackson.internal;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.StreamReadConstraints;
+import com.fasterxml.jackson.core.json.PackageVersion;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -39,6 +40,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.core.Configuration;
 import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.ext.Providers;
 
 /**
@@ -48,12 +50,11 @@ import jakarta.ws.rs.ext.Providers;
 public class DefaultJacksonJaxbJsonProvider extends JacksonJaxbJsonProvider {
     private Configuration commonConfig;
     private static final Logger LOGGER = Logger.getLogger(DefaultJacksonJaxbJsonProvider.class.getName());
+    private final boolean hasConfig;
 
     @Inject
     public DefaultJacksonJaxbJsonProvider(@Context Providers providers, @Context Configuration config) {
-        super(new JacksonMapperConfigurator(null, DEFAULT_ANNOTATIONS));
-        this.commonConfig = config;
-        _providers = providers;
+        this(providers, config, DEFAULT_ANNOTATIONS);
     }
 
     //do not register JaxbAnnotationModule because it brakes default annotations processing
@@ -63,12 +64,36 @@ public class DefaultJacksonJaxbJsonProvider extends JacksonJaxbJsonProvider {
         super(new JacksonMapperConfigurator(null, annotationsToUse));
         this.commonConfig = config;
         _providers = providers;
+
+        boolean ex = true;
+        try {
+            Object jaxrsFeatureBag = config.getProperty(JaxrsFeatureBag.JAXRS_FEATURE);
+            if (jaxrsFeatureBag != null && (JaxrsFeatureBag.class.isInstance(jaxrsFeatureBag))) {
+                ((JaxrsFeatureBag) jaxrsFeatureBag).configureJaxrsFeatures(this);
+            }
+        } catch (RuntimeException e) {
+            // ignore - not configured
+            LOGGER.fine(LocalizationMessages.ERROR_CONFIGURING(e.getMessage()));
+            ex = false;
+        }
+        hasConfig = ex;
+    }
+
+    @Override
+    protected ObjectMapper _locateMapperViaProvider(Class<?> type, MediaType mediaType) {
+        ObjectMapper mapper = super._locateMapperViaProvider(type, mediaType);
+        if (AbstractObjectMapper.class.isInstance(mapper)) {
+            ((AbstractObjectMapper) mapper).jaxrsFeatureBag.configureJaxrsFeatures(this);
+        }
+        return mapper;
     }
 
     @Override
     protected JsonEndpointConfig _configForReading(ObjectReader reader, Annotation[] annotations) {
         try {
-            updateFactoryConstraints(reader.getFactory());
+            if (hasConfig) {
+                updateFactoryConstraints(reader.getFactory());
+            }
         } catch (Throwable t) {
             // A Jackson 14 would throw NoSuchMethodError, ClassNotFoundException, NoClassDefFoundError or similar
             // that should have been ignored
@@ -130,17 +155,22 @@ public class DefaultJacksonJaxbJsonProvider extends JacksonJaxbJsonProvider {
 
         if (maxStringLength != StreamReadConstraints.DEFAULT_MAX_STRING_LEN) {
             final StreamReadConstraints constraints = jsonFactory.streamReadConstraints();
-            jsonFactory.setStreamReadConstraints(
-                    StreamReadConstraints.builder()
-                            // our
-                            .maxStringLength(maxStringLength)
-                            // customers
-                            .maxDocumentLength(constraints.getMaxDocumentLength())
-                            .maxNameLength(constraints.getMaxNameLength())
-                            .maxNestingDepth(constraints.getMaxNestingDepth())
-                            .maxNumberLength(constraints.getMaxNumberLength())
-                            .build()
-            );
+            StreamReadConstraints.Builder builder = StreamReadConstraints.builder()
+                // our
+                .maxStringLength(maxStringLength)
+                // customers
+                .maxDocumentLength(constraints.getMaxDocumentLength())
+                .maxNameLength(constraints.getMaxNameLength())
+                .maxNestingDepth(constraints.getMaxNestingDepth())
+                .maxNumberLength(constraints.getMaxNumberLength());
+
+            if (PackageVersion.VERSION.getMinorVersion() >= 18) {
+                 builder.maxTokenCount(constraints.getMaxTokenCount());
+            } else {
+                LOGGER.warning(LocalizationMessages.ERROR_JACKSON_STREAMREADCONSTRAINTS_218("maxTokenCount"));
+            }
+
+            jsonFactory.setStreamReadConstraints(builder.build());
         }
     }
 }

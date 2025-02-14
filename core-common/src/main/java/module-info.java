@@ -72,7 +72,8 @@ module org.glassfish.jersey.core.common {
                                               org.glassfish.jersey.container.servlet.core,
                                               org.glassfish.jersey.apache5.connector,
                                               org.glassfish.jersey.apache.connector;
-    exports org.glassfish.jersey.innate.spi to org.glassfish.jersey.media.multipart;
+    exports org.glassfish.jersey.innate.spi to org.glassfish.jersey.core.client,
+                                               org.glassfish.jersey.media.multipart;
     exports org.glassfish.jersey.innate.inject.spi to org.glassfish.jersey.inject.hk2;
 
     opens org.glassfish.jersey.innate.spi to org.glassfish.jersey.media.multipart;

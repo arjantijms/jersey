@@ -2185,7 +2185,7 @@
         <resources.mvn.plugin.version>3.3.1</resources.mvn.plugin.version>
         <shade.mvn.plugin.version>3.6.0</shade.mvn.plugin.version>
         <source.mvn.plugin.version>3.3.1</source.mvn.plugin.version>
-        <surefire.mvn.plugin.version>3.3.1</surefire.mvn.plugin.version>
+        <surefire.mvn.plugin.version>3.5.2</surefire.mvn.plugin.version>
         <war.mvn.plugin.version>3.4.0</war.mvn.plugin.version>
         <wiremock.mvn.plugin.version>2.11.0</wiremock.mvn.plugin.version>
         <xml.mvn.plugin.version>1.1.0</xml.mvn.plugin.version>
@@ -2198,15 +2198,15 @@
         <arquillian.weld.version>3.0.1.Final</arquillian.weld.version> <!-- 3.0.2.Final fails microprofile TCK tests -->
         <!-- asm is now source integrated - keeping this property to see the version -->
         <!-- see core-server/src/main/java/jersey/repackaged/asm/.. -->
-        <asm.version>9.7</asm.version>
+        <asm.version>9.7.1</asm.version>
         <!--required for spring (ext) modules integration -->
         <aspectj.weaver.version>1.9.22.1</aspectj.weaver.version>
         <!--        <bnd.plugin.version>2.3.6</bnd.plugin.version>-->
         <bouncycastle.version>1.70</bouncycastle.version>
         <commons.io.version>2.16.1</commons.io.version>
         <commons.codec.version>1.16.1</commons.codec.version>
-        <!--        <commons-lang3.version>3.3.2</commons-lang3.version>-->
-        <commons.logging.version>1.3.3</commons.logging.version>
+<!--        <commons-lang3.version>3.3.2</commons-lang3.version>-->
+        <commons.logging.version>1.3.4</commons.logging.version>
         <fasterxml.classmate.version>1.7.0</fasterxml.classmate.version>
         <felix.eventadmin.version>1.6.4</felix.eventadmin.version>
         <felix.framework.security.version>2.8.4</felix.framework.security.version>
@@ -2214,7 +2214,7 @@
         <findbugs.glassfish.version>1.7</findbugs.glassfish.version>
         <freemarker.version>2.3.33</freemarker.version>
         <gae.version>2.0.29</gae.version>
-        <groovy.version>4.0.23</groovy.version>
+        <groovy.version>5.0.0-alpha-11</groovy.version>
         <gson.version>2.11.0</gson.version>
 
         <!--versions, extracted here due to maven-enforcer-plugin -->
@@ -2229,7 +2229,8 @@
 
         <!-- microprofile -->
         <microprofile.config.version>3.0.3</microprofile.config.version>
-        <microprofile.rest.client.version>3.0.1</microprofile.rest.client.version>
+        <microprofile.rest.client3.version>3.0.1</microprofile.rest.client3.version>
+        <microprofile.rest.client.version>4.0</microprofile.rest.client.version>
         <helidon.config.version>3.2.6</helidon.config.version>
         <helidon.connector.version>3.2.8</helidon.connector.version>
         <helidon.config.11.version>1.4.14</helidon.config.11.version> <!-- JDK 11- support -->
@@ -2240,7 +2241,7 @@
         <xmlunit.version>2.10.0</xmlunit.version>
         <httpclient.version>4.5.14</httpclient.version>
         <httpclient5.version>5.3.1</httpclient5.version>
-        <jackson.version>2.17.2</jackson.version>
+        <jackson.version>2.18.0</jackson.version>
         <javassist.version>3.30.2-GA</javassist.version>
         <jettison.version>1.3.7</jettison.version> <!-- TODO: 1.3.8 doesn't work; AbstractJsonTest complexBeanWithAttributes -->
         <jboss.vfs.version>3.3.2.Final</jboss.vfs.version>
@@ -2248,7 +2249,7 @@
         <jmh.version>1.37</jmh.version>
         <jmockit.version>1.49</jmockit.version>
         <junit4.version>4.13.2</junit4.version>
-        <junit5.version>5.11.0</junit5.version>
+        <junit5.version>5.11.4</junit5.version>
         <junit-platform-suite.version>1.11.0</junit-platform-suite.version>
         <junit-platform-suite.legacy.version>1.10.0</junit-platform-suite.legacy.version>
         <kryo.version>4.0.3</kryo.version>
@@ -2270,7 +2271,7 @@
         <servlet6.version>6.0.0</servlet6.version>
 
         <simple.version>6.0.1</simple.version>
-        <slf4j.version>2.0.13</slf4j.version>
+        <slf4j.version>2.0.16</slf4j.version>
         <spring6.version>6.0.18</spring6.version>
         <testng.version>7.10.2</testng.version>
         <testng6.version>6.14.3</testng6.version>
@@ -2281,7 +2282,8 @@
         <weld3.version>3.1.9.Final</weld3.version>
         <validation.impl.version>8.0.1.Final</validation.impl.version>
         <!-- END of Jakartified, eligible for CQ -->
-        <wiremock.version>2.27.2</wiremock.version>
+        <wiremock.jetty9.version>2.27.2</wiremock.jetty9.version>
+        <wiremock.jetty11.version>3.10.0</wiremock.jetty11.version>
         <xerces.version>2.12.2</xerces.version>
 
         <!-- Graal VM       -->
