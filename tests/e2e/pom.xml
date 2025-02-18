@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2011, 2024 Oracle and/or its affiliates. All rights reserved.
+    Copyright (c) 2011, 2025 Oracle and/or its affiliates. All rights reserved.
 
     This program and the accompanying materials are made available under the
     terms of the Eclipse Public License v. 2.0, which is available at
@@ -41,10 +41,10 @@
                     <forkCount>1</forkCount>
                     <reuseForks>false</reuseForks>
                     <enableAssertions>false</enableAssertions>
-                    <skipTests>${skip.e2e}</skipTests>
                     <excludes>
                         <!--TODO remove after jakartification-->
                         <exclude>org/glassfish/jersey/tests/e2e/server/wadl/NoJAXBNoWadlTest.java</exclude>
+                        <exclude>org/glassfish/jersey/tests/e2e/inject/SingleRequestScopeInjectionTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -211,6 +211,7 @@
                             <testExcludes>
                                 <testExclude>org/glassfish/jersey/tests/e2e/container/Jersey2462Test.java</testExclude>
                                 <testExclude>org/glassfish/jersey/tests/e2e/container/JettyEmptyHeaderParamTest.java</testExclude>
+                                <testExclude>org/glassfish/jersey/tests/e2e/inject/SingleRequestScopeInjectionTest.java</testExclude>
                             </testExcludes>
                         </configuration>
                     </plugin>

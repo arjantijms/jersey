@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2016, 2024 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -34,7 +34,6 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -89,6 +88,10 @@ import org.glassfish.jersey.client.innate.ClientProxy;
 import org.glassfish.jersey.client.innate.http.SSLParamConfigurator;
 import org.glassfish.jersey.client.spi.AsyncConnectorCallback;
 import org.glassfish.jersey.client.spi.Connector;
+import org.glassfish.jersey.innate.VirtualThreadUtil;
+import org.glassfish.jersey.internal.util.collection.LazyValue;
+import org.glassfish.jersey.internal.util.collection.Value;
+import org.glassfish.jersey.internal.util.collection.Values;
 import org.glassfish.jersey.message.internal.OutboundMessageContext;
 import org.glassfish.jersey.netty.connector.internal.NettyEntityWriter;
 
@@ -103,6 +106,17 @@ class NettyConnector implements Connector {
     final EventLoopGroup group;
     final Client client;
     final HashMap<String, ArrayList<Channel>> connections = new HashMap<>();
+
+    private static final LazyValue<String> NETTY_VERSION = Values.lazy(
+        (Value<String>) () -> {
+            String nettyVersion = null;
+            try {
+                nettyVersion = io.netty.util.Version.identify().values().iterator().next().artifactVersion();
+            } catch (Throwable t) {
+                nettyVersion = "4.1.x";
+            }
+            return "Netty " + nettyVersion;
+        });
 
     // If HTTP keepalive is enabled the value of "http.maxConnections" determines the maximum number
     // of idle connections that will be simultaneously kept alive, per destination.
@@ -130,14 +144,15 @@ class NettyConnector implements Connector {
 
     NettyConnector(Client client) {
 
-        final Map<String, Object> properties = client.getConfiguration().getProperties();
+        final Configuration configuration = client.getConfiguration();
+        final Map<String, Object> properties = configuration.getProperties();
         final Object threadPoolSize = properties.get(ClientProperties.ASYNC_THREADPOOL_SIZE);
 
         if (threadPoolSize != null && threadPoolSize instanceof Integer && (Integer) threadPoolSize > 0) {
-            executorService = Executors.newFixedThreadPool((Integer) threadPoolSize);
+            executorService = VirtualThreadUtil.withConfig(configuration).newFixedThreadPool((Integer) threadPoolSize);
             this.group = new NioEventLoopGroup((Integer) threadPoolSize);
         } else {
-            executorService = Executors.newCachedThreadPool();
+            executorService = VirtualThreadUtil.withConfig(configuration).newCachedThreadPool();
             this.group = new NioEventLoopGroup();
         }
 
@@ -208,7 +223,7 @@ class NettyConnector implements Connector {
 
         try {
             final SSLParamConfigurator sslConfig = SSLParamConfigurator.builder()
-                    .request(jerseyRequest).setSNIAlways(true).build();
+                    .request(jerseyRequest).setSNIAlways(true).setSNIHostName(jerseyRequest).build();
 
             String key = requestUri.getScheme() + "://" + sslConfig.getSNIHostName() + ":" + port;
             ArrayList<Channel> conns;
@@ -303,7 +318,17 @@ class NettyConnector implements Connector {
                          p.addLast(sslHandler);
                      }
 
-                     p.addLast(new HttpClientCodec());
+                     final Integer maxHeaderSize = ClientProperties.getValue(config.getProperties(),
+                                NettyClientProperties.MAX_HEADER_SIZE,
+                                NettyClientProperties.DEFAULT_HEADER_SIZE);
+                     final Integer maxChunkSize = ClientProperties.getValue(config.getProperties(),
+                                NettyClientProperties.MAX_CHUNK_SIZE,
+                                NettyClientProperties.DEFAULT_CHUNK_SIZE);
+                     final Integer maxInitialLineLength = ClientProperties.getValue(config.getProperties(),
+                                NettyClientProperties.MAX_INITIAL_LINE_LENGTH,
+                                NettyClientProperties.DEFAULT_INITIAL_LINE_LENGTH);
+
+                     p.addLast(new HttpClientCodec(maxInitialLineLength, maxHeaderSize, maxChunkSize));
                      p.addLast(new ChunkedWriteHandler());
                      p.addLast(new HttpContentDecompressor());
                     }
@@ -391,11 +416,7 @@ class NettyConnector implements Connector {
             // headers
             if (!jerseyRequest.hasEntity()) {
                 setHeaders(jerseyRequest, nettyRequest.headers(), false);
-
-                // host header - http 1.1
-                if (!nettyRequest.headers().contains(HttpHeaderNames.HOST)) {
-                    nettyRequest.headers().add(HttpHeaderNames.HOST, jerseyRequest.getUri().getHost());
-                }
+                setHostHeader(jerseyRequest, nettyRequest);
             }
 
             if (jerseyRequest.hasEntity()) {
@@ -411,7 +432,7 @@ class NettyConnector implements Connector {
                     };
                 ch.closeFuture().addListener(closeListener);
 
-                final NettyEntityWriter entityWriter = NettyEntityWriter.getInstance(jerseyRequest, ch);
+                final NettyEntityWriter entityWriter = nettyEntityWriter(jerseyRequest, ch);
                 switch (entityWriter.getType()) {
                     case CHUNKED:
                         HttpUtil.setTransferEncodingChunked(nettyRequest, true);
@@ -443,9 +464,7 @@ class NettyConnector implements Connector {
                     @Override
                     public OutputStream getOutputStream(int contentLength) throws IOException {
                         replaceHeaders(jerseyRequest, nettyRequest.headers()); // WriterInterceptor changes
-                        if (!nettyRequest.headers().contains(HttpHeaderNames.HOST)) {
-                            nettyRequest.headers().add(HttpHeaderNames.HOST, jerseyRequest.getUri().getHost());
-                        }
+                        setHostHeader(jerseyRequest, nettyRequest);
                         headersSet.countDown();
 
                         return entityWriter.getOutputStream();
@@ -499,6 +518,10 @@ class NettyConnector implements Connector {
         }
     }
 
+    /* package */ NettyEntityWriter nettyEntityWriter(ClientRequest clientRequest, Channel channel) {
+        return NettyEntityWriter.getInstance(clientRequest, channel);
+    }
+
     private SSLContext getSslContext(Client client, ClientRequest request) {
         Supplier<SSLContext> supplier = request.resolveProperty(ClientProperties.SSL_CONTEXT_SUPPLIER, Supplier.class);
         return supplier == null ? client.getSslContext() : supplier.get();
@@ -514,7 +537,7 @@ class NettyConnector implements Connector {
 
     @Override
     public String getName() {
-        return "Netty 4.1.x";
+        return NETTY_VERSION.get();
     }
 
     @Override
@@ -590,5 +613,19 @@ class NettyConnector implements Connector {
      */
     private static boolean additionalProxyHeadersToKeep(String key) {
         return key.length() > 2 && (key.charAt(0) == 'x' || key.charAt(0) == 'X') && (key.charAt(1) == '-');
+    }
+
+    private static void setHostHeader(ClientRequest jerseyRequest, HttpRequest nettyRequest) {
+        // host header - http 1.1
+        if (!nettyRequest.headers().contains(HttpHeaderNames.HOST)) {
+            int requestPort = jerseyRequest.getUri().getPort();
+            final String hostHeader;
+            if (requestPort != 80 && requestPort != 443) {
+                hostHeader = jerseyRequest.getUri().getHost() + ":" + requestPort;
+            } else {
+                hostHeader = jerseyRequest.getUri().getHost();
+            }
+            nettyRequest.headers().add(HttpHeaderNames.HOST, hostHeader);
+        }
     }
 }

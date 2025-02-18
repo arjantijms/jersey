@@ -41,6 +41,7 @@ jaxb.index
 /etc/config/copyright.txt
 /etc/config/edl-copyright.txt
 /etc/jenkins/
+/etc/scripts/
 /etc/travis/
 /LICENSE.md
 /third-party-license-readme.txt
@@ -92,3 +93,4 @@ NOTICE.md
 /media/json-binding/src/test/java/org/glassfish/jersey/jsonb/internal/JsonBindingProviderTest.java
 /connectors/jdk-connector/src/test/resources
 /tools
+/media/multipart/src/test/resources/multipart

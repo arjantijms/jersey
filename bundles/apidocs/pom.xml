@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2012, 2024 Oracle and/or its affiliates. All rights reserved.
+    Copyright (c) 2012, 2025 Oracle and/or its affiliates. All rights reserved.
 
     This program and the accompanying materials are made available under the
     terms of the Eclipse Public License v. 2.0, which is available at
@@ -63,12 +63,6 @@
             <groupId>org.glassfish.jersey.connectors</groupId>
             <artifactId>jersey-apache-connector</artifactId>
             <version>${project.version}</version>
-            <!--<exclusions>
-                <exclusion>
-                    <groupId>commons-codec</groupId>
-                    <artifactId>commons-codec</artifactId>
-                </exclusion>
-            </exclusions>-->
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.connectors</groupId>
@@ -131,11 +125,7 @@
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.servlet</artifactId>
-            <version>3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.persistence</groupId>
-            <artifactId>jakarta.persistence-api</artifactId>
+            <version>3.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
@@ -299,24 +289,35 @@
                                 <fileExclude>META-INF/versions/17/org/glassfish/jersey/jetty/connector/*.java</fileExclude>
                                 <fileExclude>META-INF/versions/17/org/glassfish/jersey/helidon/connector/*.java</fileExclude>
                                 <fileExclude>org/glassfish/jersey/helidon/connector/*.java</fileExclude>
+                                <fileExclude>org/glassfish/jersey/jetty/*.java</fileExclude>
+                                <fileExclude>org/glassfish/jersey/jetty/connector/*.java</fileExclude>
                                 <fileExclude>org/glassfish/jersey/wadl/doclet/*.java</fileExclude>
+                                <fileExclude>module-info.java</fileExclude>
                             </sourceFileExcludes>
+                            <source>${java.version}</source>
+                            <disableSourcepathUsage>true</disableSourcepathUsage>
                             <dependencySourceIncludes>
                                 <dependencySourceInclude>org.glassfish.jersey.*:*</dependencySourceInclude>
                             </dependencySourceIncludes>
-                            <excludePackageNames>*.internal.*:*.innate.*</excludePackageNames>
+                            <excludePackageNames>*.innate:*.innate.*</excludePackageNames>
+                            <legacyMode>true</legacyMode>
+                            <verbose>false</verbose>
+                            <debug>true</debug>
+                            <detectJavaApiLink>false</detectJavaApiLink>
+                            <detectLinks>false</detectLinks>
+                            <doclint>none</doclint>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>exclude-jar</id>
                         <goals>
-                            <goal>remove-project-artifact</goal>
+                            <goal>purge-local-repository</goal>
                         </goals>
                     </execution>
                 </executions>

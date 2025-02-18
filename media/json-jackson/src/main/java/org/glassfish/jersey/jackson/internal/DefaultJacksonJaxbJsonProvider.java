@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -18,6 +18,7 @@ package org.glassfish.jersey.jackson.internal;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.StreamReadConstraints;
+import com.fasterxml.jackson.core.json.PackageVersion;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -31,6 +32,7 @@ import org.glassfish.jersey.message.MessageProperties;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 import jakarta.annotation.PostConstruct;
@@ -38,6 +40,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.core.Configuration;
 import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.ext.Providers;
 
 /**
@@ -47,31 +50,50 @@ import jakarta.ws.rs.ext.Providers;
 public class DefaultJacksonJaxbJsonProvider extends JacksonJaxbJsonProvider {
     private Configuration commonConfig;
     private static final Logger LOGGER = Logger.getLogger(DefaultJacksonJaxbJsonProvider.class.getName());
+    private final boolean hasConfig;
 
     @Inject
     public DefaultJacksonJaxbJsonProvider(@Context Providers providers, @Context Configuration config) {
-        super(new JacksonMapperConfigurator(null, DEFAULT_ANNOTATIONS));
-        this.commonConfig = config;
-        _providers = providers;
+        this(providers, config, DEFAULT_ANNOTATIONS);
     }
 
     //do not register JaxbAnnotationModule because it brakes default annotations processing
     private static final String[] EXCLUDE_MODULE_NAMES = {"JaxbAnnotationModule", "JakartaXmlBindAnnotationModule"};
 
-    public DefaultJacksonJaxbJsonProvider() {
-        super(new JacksonMapperConfigurator(null, DEFAULT_ANNOTATIONS));
-    }
-
     public DefaultJacksonJaxbJsonProvider(Providers providers, Configuration config, Annotations... annotationsToUse) {
         super(new JacksonMapperConfigurator(null, annotationsToUse));
         this.commonConfig = config;
         _providers = providers;
+
+        boolean ex = true;
+        try {
+            Object jaxrsFeatureBag = config.getProperty(JaxrsFeatureBag.JAXRS_FEATURE);
+            if (jaxrsFeatureBag != null && (JaxrsFeatureBag.class.isInstance(jaxrsFeatureBag))) {
+                ((JaxrsFeatureBag) jaxrsFeatureBag).configureJaxrsFeatures(this);
+            }
+        } catch (RuntimeException e) {
+            // ignore - not configured
+            LOGGER.fine(LocalizationMessages.ERROR_CONFIGURING(e.getMessage()));
+            ex = false;
+        }
+        hasConfig = ex;
+    }
+
+    @Override
+    protected ObjectMapper _locateMapperViaProvider(Class<?> type, MediaType mediaType) {
+        ObjectMapper mapper = super._locateMapperViaProvider(type, mediaType);
+        if (AbstractObjectMapper.class.isInstance(mapper)) {
+            ((AbstractObjectMapper) mapper).jaxrsFeatureBag.configureJaxrsFeatures(this);
+        }
+        return mapper;
     }
 
     @Override
     protected JsonEndpointConfig _configForReading(ObjectReader reader, Annotation[] annotations) {
         try {
-            updateFactoryConstraints(reader.getFactory());
+            if (hasConfig) {
+                updateFactoryConstraints(reader.getFactory());
+            }
         } catch (Throwable t) {
             // A Jackson 14 would throw NoSuchMethodError, ClassNotFoundException, NoClassDefFoundError or similar
             // that should have been ignored
@@ -104,7 +126,13 @@ public class DefaultJacksonJaxbJsonProvider extends JacksonJaxbJsonProvider {
                         commonConfig.getRuntimeType(),
                         CommonProperties.JSON_JACKSON_ENABLED_MODULES, String.class);
 
-        final List<Module> modules = ObjectMapper.findModules();
+        final List<Module> modules;
+        try {
+            modules = ObjectMapper.findModules();
+        } catch (Throwable e) {
+            LOGGER.warning(LocalizationMessages.ERROR_MODULES_NOT_LOADED(e.getMessage()));
+            return Collections.emptyList();
+        }
         for (String exludeModuleName : EXCLUDE_MODULE_NAMES) {
             modules.removeIf(mod -> mod.getModuleName().contains(exludeModuleName));
         }
@@ -127,13 +155,22 @@ public class DefaultJacksonJaxbJsonProvider extends JacksonJaxbJsonProvider {
 
         if (maxStringLength != StreamReadConstraints.DEFAULT_MAX_STRING_LEN) {
             final StreamReadConstraints constraints = jsonFactory.streamReadConstraints();
-            jsonFactory.setStreamReadConstraints(
-                    StreamReadConstraints.builder()
-                            .maxStringLength(maxStringLength)
-                            .maxNestingDepth(constraints.getMaxNestingDepth())
-                            .maxNumberLength(constraints.getMaxNumberLength())
-                            .build()
-            );
+            StreamReadConstraints.Builder builder = StreamReadConstraints.builder()
+                // our
+                .maxStringLength(maxStringLength)
+                // customers
+                .maxDocumentLength(constraints.getMaxDocumentLength())
+                .maxNameLength(constraints.getMaxNameLength())
+                .maxNestingDepth(constraints.getMaxNestingDepth())
+                .maxNumberLength(constraints.getMaxNumberLength());
+
+            if (PackageVersion.VERSION.getMinorVersion() >= 18) {
+                 builder.maxTokenCount(constraints.getMaxTokenCount());
+            } else {
+                LOGGER.warning(LocalizationMessages.ERROR_JACKSON_STREAMREADCONSTRAINTS_218("maxTokenCount"));
+            }
+
+            jsonFactory.setStreamReadConstraints(builder.build());
         }
     }
 }

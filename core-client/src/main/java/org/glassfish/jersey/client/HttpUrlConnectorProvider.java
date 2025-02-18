@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2013, 2024 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -94,7 +94,7 @@ public class HttpUrlConnectorProvider implements ConnectorProvider {
     /**
      * A value of {@code true} declares that the client will try to set
      * unsupported HTTP method to {@link java.net.HttpURLConnection} via
-     * reflection.
+     * reflection as a workaround for a missing HTTP method.
      * <p>
      * NOTE: Enabling this property may cause security related warnings/errors
      * and it may break when other JDK implementation is used. <b>Use only
@@ -103,6 +103,10 @@ public class HttpUrlConnectorProvider implements ConnectorProvider {
      * <p>The value MUST be an instance of {@link java.lang.Boolean}.</p>
      * <p>The default value is {@code false}.</p>
      * <p>The name of the configuration property is <tt>{@value}</tt>.</p>
+     * <p>Since JDK 16 the JDK internal classes are not opened for reflection and the workaround method does not work,
+     * unless {@code --add-opens java.base/java.net=ALL-UNNAMED} for HTTP requests and additional
+     * {@code --add-opens java.base/sun.net.www.protocol.https=ALL-UNNAMED} for HTTPS (HttpsUrlConnection) options are set.
+     * </p>
      */
     public static final String SET_METHOD_WORKAROUND =
             "jersey.config.client.httpUrlConnection.setMethodWorkaround";
@@ -283,9 +287,7 @@ public class HttpUrlConnectorProvider implements ConnectorProvider {
          * @throws java.io.IOException in case the connection cannot be provided.
          */
         default HttpURLConnection getConnection(URL url, Proxy proxy) throws IOException {
-            synchronized (this){
-                return (proxy == null) ? getConnection(url) : (HttpURLConnection) url.openConnection(proxy);
-            }
+            return (proxy == null) ? getConnection(url) : (HttpURLConnection) url.openConnection(proxy);
         }
     }
 
@@ -293,7 +295,16 @@ public class HttpUrlConnectorProvider implements ConnectorProvider {
 
         @Override
         public HttpURLConnection getConnection(final URL url) throws IOException {
-            return (HttpURLConnection) url.openConnection();
+            return connect(url, null);
+        }
+
+        @Override
+        public HttpURLConnection getConnection(URL url, Proxy proxy) throws IOException {
+            return connect(url, proxy);
+        }
+
+        private HttpURLConnection connect(URL url, Proxy proxy) throws IOException {
+            return (proxy == null) ? (HttpURLConnection) url.openConnection() : (HttpURLConnection) url.openConnection(proxy);
         }
     }
 
