@@ -290,23 +290,35 @@
                             <sourceFileExcludes>
                                 <fileExclude>META-INF/versions/21/org/glassfish/jersey/helidon/connector/*.java</fileExclude>
                                 <fileExclude>org/glassfish/jersey/helidon/connector/*.java</fileExclude>
+                                <fileExclude>org/glassfish/jersey/jetty/*.java</fileExclude>
+                                <fileExclude>org/glassfish/jersey/jetty/connector/*.java</fileExclude>
+                                <fileExclude>org/glassfish/jersey/wadl/doclet/*.java</fileExclude>
+                                <fileExclude>module-info.java</fileExclude>
                             </sourceFileExcludes>
+                            <source>${java.version}</source>
+                            <disableSourcepathUsage>true</disableSourcepathUsage>
                             <dependencySourceIncludes>
                                 <dependencySourceInclude>org.glassfish.jersey.*:*</dependencySourceInclude>
                             </dependencySourceIncludes>
                             <excludePackageNames>*.innate:*.innate.*</excludePackageNames>
+                            <legacyMode>true</legacyMode>
+                            <verbose>false</verbose>
+                            <debug>true</debug>
+                            <detectJavaApiLink>false</detectJavaApiLink>
+                            <detectLinks>false</detectLinks>
+                            <doclint>none</doclint>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>exclude-jar</id>
                         <goals>
-                            <goal>remove-project-artifact</goal>
+                            <goal>purge-local-repository</goal>
                         </goals>
                     </execution>
                 </executions>

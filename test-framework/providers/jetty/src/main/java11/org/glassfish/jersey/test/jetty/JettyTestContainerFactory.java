@@ -18,7 +18,7 @@ package org.glassfish.jersey.test.jetty;
 
 import java.util.Map;
 import jakarta.ws.rs.ProcessingException;
-import org.glassfish.jersey.jetty.internal.LocalizationMessages;
+import org.glassfish.jersey.test.jetty.internal.LocalizationMessages;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.spi.TestContainer;
 import org.glassfish.jersey.test.spi.TestContainerFactory;

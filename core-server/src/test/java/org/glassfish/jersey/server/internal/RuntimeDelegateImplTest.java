@@ -54,6 +54,11 @@ public class RuntimeDelegateImplTest {
      */
     @Test
     public void testRuntimeDelegateInstance() {
+        try {
+            RuntimeDelegate.getInstance().createEndpoint((Application) null, com.sun.net.httpserver.HttpHandler.class);
+        } catch (Exception e) {
+            // does not matter, this just makes sure the correct RuntimeDelegate is set
+        }
         assertSame(RuntimeDelegateImpl.class, RuntimeDelegate.getInstance().getClass());
     }
 
@@ -104,7 +109,6 @@ public class RuntimeDelegateImplTest {
         // when
         final SeBootstrap.Configuration configuration = configurationBuilder.property("property", "value").build();
 
-        // then
         assertThat(configuration, is(notNullValue()));
         assertTrue(configuration.hasProperty("property"));
         assertThat(configuration.property("property"), is("value"));

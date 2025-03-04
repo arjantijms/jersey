@@ -115,4 +115,9 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <properties>
+	<!-- JPMS relatest test config -->
+        <surefire.coverage.argline>--add-modules=ALL-MODULE-PATH</surefire.coverage.argline>
+    </properties>
 </project>

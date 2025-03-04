@@ -34,6 +34,14 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <surefire.coverage.argline>
+            --add-opens org.glassfish.jersey.core.common/org.glassfish.jersey.innate=ALL-UNNAMED
+            --add-opens org.glassfish.jersey.core.common/org.glassfish.jersey.innate.virtual=ALL-UNNAMED
+            --add-opens java.base/java.lang=org.glassfish.jersey.netty.connector
+            --add-opens java.base/java.lang.reflect=org.glassfish.jersey.netty.connector
+            --add-exports org.glassfish.jersey.core.common/org.glassfish.jersey.innate=ALL-UNNAMED
+            --add-modules=ALL-MODULE-PATH
+        </surefire.coverage.argline>
     </properties>
 
     <dependencies>
@@ -50,9 +58,20 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>${project.version}</version>
+<!--            <scope>test</scope>-->
+        </dependency>
+        <dependency>
             <groupId>org.glassfish.jersey.test-framework.providers</groupId>
             <artifactId>jersey-test-framework-provider-jetty</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-engine</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -101,24 +120,5 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>InaccessibleObjectException</id>
-            <activation><jdk>[12,)</jdk></activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <argLine>
-                                --add-opens java.base/java.lang=ALL-UNNAMED
-                                --add-opens java.base/java.lang.reflect=ALL-UNNAMED
-                            </argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
-
 </project>

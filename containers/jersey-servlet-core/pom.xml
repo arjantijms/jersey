@@ -36,7 +36,7 @@
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
-            <version>${servlet6.version}</version>
+<!--            <version>${servlet6.version}</version>-->
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -85,5 +85,11 @@
              </plugin>
          </plugins>
     </build>
+    <properties>
+        <surefire.coverage.argline>
+            --add-reads org.glassfish.jersey.container.servlet.core=ALL-UNNAMED
+            --add-modules=ALL-MODULE-PATH
+        </surefire.coverage.argline>
+    </properties>
 
 </project>

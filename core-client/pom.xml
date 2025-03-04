@@ -41,24 +41,24 @@
                 <inherited>true</inherited>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <inherited>true</inherited>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <inherited>false</inherited>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <compilerArguments>
-                        <!-- Do not warn about using sun.misc.Unsafe -->
-                        <XDignore.symbol.file />
-                    </compilerArguments>
-                    <showWarnings>false</showWarnings>
-                    <fork>false</fork>
-                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <source>${java.version}</source>
+                            <target>${java.version}</target>
+                            <compilerArguments>
+                                <!-- Do not warn about using sun.misc.Unsafe -->
+                                <XDignore.symbol.file/>
+                            </compilerArguments>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -68,6 +68,7 @@
                     <parallel>classesAndMethods</parallel>
                     <perCoreThreadCount>true</perCoreThreadCount>
                     <threadCount>1</threadCount>
+                    <forkCount>0</forkCount>
                 </configuration>
             </plugin>
 
@@ -118,6 +119,19 @@
             <groupId>jakarta.inject</groupId>
             <artifactId>jakarta.inject-api</artifactId>
         </dependency>
+
+<!--
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+        </dependency>
+-->
 
         <dependency>
             <!-- not to warn about missing activation -->

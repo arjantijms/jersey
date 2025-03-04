@@ -79,6 +79,6 @@
                     <unpackBundle>true</unpackBundle>
                 </configuration>
              </plugin>
-         </plugins>
+        </plugins>
      </build>
 </project>

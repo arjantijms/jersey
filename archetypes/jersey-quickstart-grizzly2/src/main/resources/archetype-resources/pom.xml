@@ -52,10 +52,6 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${compiler.mvn.plugin.version}</version>
                 <inherited>true</inherited>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
