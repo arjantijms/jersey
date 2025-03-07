@@ -32,6 +32,7 @@
     <properties>
         <surefire.coverage.argline>
             --add-opens org.glassfish.jersey.core.common/org.glassfish.jersey.innate=ALL-UNNAMED
+            --add-opens org.glassfish.jersey.core.common/org.glassfish.jersey.innate.inject=ALL-UNNAMED
             --add-opens org.glassfish.jersey.core.common/org.glassfish.jersey.innate.virtual=ALL-UNNAMED
             --add-modules=ALL-MODULE-PATH
         </surefire.coverage.argline>

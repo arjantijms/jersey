@@ -118,6 +118,9 @@
 
     <properties>
 	<!-- JPMS relatest test config -->
-        <surefire.coverage.argline>--add-modules=ALL-MODULE-PATH</surefire.coverage.argline>
+        <surefire.coverage.argline>
+            --add-reads org.glassfish.jersey.media.jsonb=org.glassfish.jersey.inject.hk2
+            --add-modules=ALL-MODULE-PATH
+        </surefire.coverage.argline>
     </properties>
 </project>

@@ -30,6 +30,12 @@
     <packaging>jar</packaging>
     <name>jersey-media-jaxb</name>
 
+    <properties>
+        <surefire.security.argline>
+            --add-reads org.glassfish.jersey.media.jaxb=org.glassfish.jersey.inject.hk2
+        </surefire.security.argline>
+    </properties>
+
     <description>
         JAX-RS features based upon JAX-B.
     </description>

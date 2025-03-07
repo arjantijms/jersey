@@ -1,9 +1,5 @@
 /*
-<<<<<<<< HEAD:incubator/cdi-inject-weld/src/test/java/org/glassfish/jersey/inject/weld/ClientTestParent.java
- * Copyright (c) 2024 Oracle and/or its affiliates. All rights reserved.
-========
- * Copyright (c) 2022 Oracle and/or its affiliates. All rights reserved.
->>>>>>>> origin/3.1.JPMS:tests/integration/jersey-780/src/main/java/module-info.java
+ * Copyright (c) 2024, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -18,7 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-<<<<<<<< HEAD:incubator/cdi-inject-weld/src/test/java/org/glassfish/jersey/inject/weld/ClientTestParent.java
 package org.glassfish.jersey.inject.weld;
 
 import org.glassfish.jersey.internal.inject.Injections;
@@ -32,8 +27,3 @@ public class ClientTestParent extends TestParent {
         injectionManager = Injections.createInjectionManager(RuntimeType.CLIENT);
     }
 }
-========
-module org.glassfish.jersey.tests.integration.jersey_780 {
-    requires jakarta.ws.rs;
-}
->>>>>>>> origin/3.1.JPMS:tests/integration/jersey-780/src/main/java/module-info.java

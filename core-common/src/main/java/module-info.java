@@ -34,7 +34,6 @@ module org.glassfish.jersey.core.common {
     exports org.glassfish.jersey.internal.config;
     exports org.glassfish.jersey.internal.guava;
     exports org.glassfish.jersey.internal.inject;
-    exports org.glassfish.jersey.internal.jsr166;
     exports org.glassfish.jersey.internal.l10n;
     exports org.glassfish.jersey.internal.sonar;
     exports org.glassfish.jersey.internal.spi;
@@ -54,11 +53,30 @@ module org.glassfish.jersey.core.common {
     exports org.glassfish.jersey.uri.internal;
 
 
-    exports org.glassfish.jersey.innate to org.glassfish.jersey.container.grizzly2.http,
+    exports org.glassfish.jersey.innate to org.glassfish.jersey.core.client,org.glassfish.jersey.core.server,
+                                           org.glassfish.jersey.container.grizzly2.http,
                                            org.glassfish.jersey.container.servlet.core,
                                            org.glassfish.jersey.container.jetty.http,
                                            org.glassfish.jersey.netty.connector,
                                            org.glassfish.jersey.ext.mp.rest.client;
+    exports org.glassfish.jersey.innate.inject to org.glassfish.jersey.inject.hk2,
+                                                  org.glassfish.jersey.inject.cdi2.se,
+                                                  org.glassfish.jersey.core.client,
+                                                  org.glassfish.jersey.core.server,
+                                                  org.glassfish.jersey.container.grizzly2.http,
+                                                  org.glassfish.jersey.container.servlet.core,
+                                                  org.glassfish.jersey.container.jetty.http,
+                                                  org.glassfish.jersey.media.sse,
+                                                  org.glassfish.jersey.media.jaxb,
+                                                  org.glassfish.jersey.media.moxy,
+                                                  org.glassfish.jersey.media.multipart,
+                                                  org.glassfish.jersey.ext.bean.validation,
+                                                  org.glassfish.jersey.ext.cdi1x,
+                                                  org.glassfish.jersey.ext.cdi1x.transaction,
+                                                  org.glassfish.jersey.ext.entity.filtering,
+                                                  org.glassfish.jersey.ext.mvc,
+                                                  org.glassfish.jersey.gf.ejb,
+                                                  org.glassfish.jersey.security.oauth1.signature;
     exports org.glassfish.jersey.innate.virtual to org.glassfish.jersey.container.grizzly2.http,
                                                    org.glassfish.jersey.container.jetty.http,
                                                    org.glassfish.jersey.netty.connector,

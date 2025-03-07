@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2023, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -20,8 +20,8 @@ module org.glassfish.jersey.jetty.connector {
     requires jakarta.inject;
     requires jakarta.ws.rs;
 
-    requires org.eclipse.jetty.client;
     requires org.eclipse.jetty.server;
+    requires org.eclipse.jetty.client;
     requires org.eclipse.jetty.http;
     requires org.eclipse.jetty.io;
     requires org.eclipse.jetty.util;

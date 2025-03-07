@@ -36,6 +36,7 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 import org.glassfish.jersey.client.spi.ConnectorProvider;
 import org.glassfish.jersey.grizzly.connector.GrizzlyConnectorProvider;
+import org.glassfish.jersey.jetty.connector.JettyConnectorProvider;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.test.TestProperties;
 import org.glassfish.jersey.test.spi.TestHelper;

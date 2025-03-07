@@ -943,20 +943,18 @@
                                         <release>${java.version}</release>
                                     </configuration>
                                 </execution>
-                                <!--<execution>
-                                    <id>base-compile</id>
+                                <execution>
+                                    <id>default-testCompile</id>
                                     <goals>
-                                        <goal>compile</goal>
+                                        <goal>testCompile</goal>
                                     </goals>
-                                    &lt;!&ndash; recompile everything for target VM except the module-info.java &ndash;&gt;
                                     <configuration>
-                                        <excludes>
-                                            <exclude>module-info.java</exclude>
-                                        </excludes>
-                                       &lt;!&ndash; <source>1.8</source>
-                                        <target>1.8</target>&ndash;&gt;
+                                        <compilerArgs>
+                                            <arg>--add-exports</arg>
+                                            <arg>org.glassfish.jersey.core.common/org.glassfish.jersey.innate.inject=ALL-UNNAMED</arg>
+                                        </compilerArgs>
                                     </configuration>
-                                </execution>-->
+                                </execution>
                             </executions>
                         </plugin>
                     </plugins>
@@ -1930,7 +1928,7 @@
             <dependency>
                 <groupId>org.jboss.weld</groupId>
                 <artifactId>weld-api</artifactId>
-                <version>${weld.version}</version>
+                <version>${weld.api.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.weld.se</groupId>
@@ -2202,7 +2200,7 @@
         <!--versions, extracted here due to maven-enforcer-plugin -->
         <!--        <commons.codec.version>1.15</commons.codec.version>-->
         <com.uber.jaeger.version>0.27.0</com.uber.jaeger.version>
-        <org.codehaus.gmavenplus.version>3.0.2</org.codehaus.gmavenplus.version>
+        <org.codehaus.gmavenplus.version>4.1.1</org.codehaus.gmavenplus.version>
         <!-- end of versions extracted here due to maven-enforcer-plugin -->
 
         <!-- micrometer -->
@@ -2261,7 +2259,8 @@
         <testng6.version>6.14.3</testng6.version>
         <thymeleaf.version>3.1.2.RELEASE</thymeleaf.version>
         <!-- Jakartified, eligible for CQ -->
-        <weld.version>6.0.0.Beta4</weld.version>
+        <weld.api.version>6.0.Final</weld.api.version>
+        <weld.version>6.0.1.Final</weld.version>
         <validation.impl.version>8.0.1.Final</validation.impl.version>
         <!-- END of Jakartified, eligible for CQ -->
         <wiremock.jetty9.version>2.27.2</wiremock.jetty9.version>

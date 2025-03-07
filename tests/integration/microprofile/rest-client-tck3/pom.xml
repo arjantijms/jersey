@@ -23,7 +23,7 @@
     <parent>
         <artifactId>microprofile-integration-project</artifactId>
         <groupId>org.glassfish.jersey.tests.integration.microprofile</groupId>
-        <version>3.5.99-SNAPSHOT</version>
+        <version>4.0.99-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -167,7 +167,7 @@
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.connectors</groupId>
-            <artifactId>jersey-apache-connector</artifactId>
+            <artifactId>jersey-apache5-connector</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

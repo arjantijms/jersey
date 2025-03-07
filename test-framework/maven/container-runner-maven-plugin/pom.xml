@@ -36,10 +36,10 @@
     </description>
 
     <properties>
-        <groovy-eclipse-compiler.version>3.7.0</groovy-eclipse-compiler.version>
-        <groovy-eclipse-batch.version>3.0.8-01</groovy-eclipse-batch.version>
-        <maven.version>3.9.2</maven.version>
-        <maven-plugin.version>3.9.0</maven-plugin.version>
+        <groovy-eclipse-compiler.version>3.9.0</groovy-eclipse-compiler.version>
+        <groovy-eclipse-batch.version>4.0.26-01</groovy-eclipse-batch.version>
+        <maven.version>3.9.9</maven.version>
+        <maven-plugin.version>3.15.1</maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -283,6 +283,13 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>groovy-plugins-release</id>
+            <url>https://groovy.jfrog.io/artifactory/plugins-release</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <profiles>
         <profile>
