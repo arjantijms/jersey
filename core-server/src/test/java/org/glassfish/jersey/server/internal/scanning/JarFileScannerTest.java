@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2024 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -37,21 +37,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * @author Martin Snyder
  */
-public class JarFileScannerTest {
+public class JarFileScannerTest extends AbstractFinderTest {
 
     private String jaxRsApiPath;
 
     @BeforeEach
     public void setUp() throws Exception {
-        final String classPath = System.getProperty("java.class.path");
-        final String[] entries = classPath.split(System.getProperty("path.separator"));
-
-        for (final String entry : entries) {
-            if (entry.contains("jakarta.ws.rs-api")) {
-                jaxRsApiPath = entry;
-                break;
-            }
-        }
+        jaxRsApiPath = setUpJaxRsApiPath();
 
         if (jaxRsApiPath == null) {
             fail("Could not find jakarta.ws.rs-api.");

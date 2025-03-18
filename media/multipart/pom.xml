@@ -34,6 +34,17 @@
         Jersey Multipart entity providers support module.
     </description>
 
+    <properties>
+        <surefire.coverage.argline>
+            --add-exports org.glassfish.jersey.core.common/org.glassfish.jersey.innate=ALL-UNNAMED
+            --add-exports org.glassfish.jersey.core.common/org.glassfish.jersey.innate.inject=ALL-UNNAMED
+            --add-exports org.glassfish.jersey.core.common/org.glassfish.jersey.innate.virtual=ALL-UNNAMED
+            --add-exports org.glassfish.jersey.core.common/org.glassfish.jersey.innate.io=ALL-UNNAMED
+            --add-exports org.glassfish.jersey.core.client/org.glassfish.jersey.client.innate=ALL-UNNAMED
+            --add-modules=ALL-MODULE-PATH
+        </surefire.coverage.argline>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -98,6 +109,12 @@
         <dependency>
             <groupId>org.glassfish.jersey.connectors</groupId>
             <artifactId>jersey-grizzly-connector</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-processing</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

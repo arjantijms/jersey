@@ -29,6 +29,15 @@
 
     <artifactId>jersey-mp-config</artifactId>
 
+    <properties>
+        <surefire.coverage.argline>
+            --add-opens org.glassfish.jersey.core.common/org.glassfish.jersey.innate=ALL-UNNAMED
+            --add-opens org.glassfish.jersey.core.common/org.glassfish.jersey.innate.inject=ALL-UNNAMED
+            --add-opens org.glassfish.jersey.core.common/org.glassfish.jersey.innate.virtual=ALL-UNNAMED
+            --add-modules=ALL-MODULE-PATH
+        </surefire.coverage.argline>
+    </properties>
+
     <dependencies>
 
         <dependency>
@@ -46,6 +55,14 @@
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-common</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
 
         <dependency>

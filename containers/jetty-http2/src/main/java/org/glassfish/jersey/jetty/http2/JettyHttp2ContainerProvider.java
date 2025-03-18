@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, 2024 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2023, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -19,7 +19,6 @@ package org.glassfish.jersey.jetty.http2;
 import org.glassfish.jersey.internal.util.JdkVersion;
 import org.glassfish.jersey.jetty.JettyHttpContainer;
 import org.glassfish.jersey.jetty.JettyHttpContainerProvider;
-import org.glassfish.jersey.jetty.internal.LocalizationMessages;
 import org.glassfish.jersey.server.spi.ContainerProvider;
 
 import jakarta.ws.rs.ProcessingException;

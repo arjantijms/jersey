@@ -146,5 +146,5 @@
             --add-opens java.base/sun.net.www.protocol.https=ALL-UNNAMED
         </http.patch.addopens>
     </properties>
-    
+
 </project>

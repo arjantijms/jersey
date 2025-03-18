@@ -132,7 +132,6 @@
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-osgi</artifactId>
-<!--            <scope>test</scope>-->
         </dependency>
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
@@ -192,7 +191,6 @@
 
                 </dependencies>
             </plugin>
-
             <!-- Extended Wadl Config: javadoc plugin generates resourcedoc.xml during the compilation using doclet.
             Generated file is then used during runtime to attach javadoc information to wadl. -->
             <plugin>

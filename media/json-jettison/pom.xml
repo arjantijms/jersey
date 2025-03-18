@@ -61,10 +61,7 @@
                         </Import-Package>
                     
                         <Export-Package>org.glassfish.jersey.jettison.*</Export-Package>
-                        
-                        <!--<Import-Package>
-                            com.sun.xml.bind.annotation;resolution:=optional,com.sun.xml.bind.v2.*;resolution:=optional, *
-                        </Import-Package>-->
+
                     </instructions>
                     <unpackBundle>true</unpackBundle>
                 </configuration>

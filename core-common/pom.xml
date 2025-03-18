@@ -71,10 +71,10 @@
         </resources>
 
         <testResources>
-          <testResource>
-            <directory>${basedir}/src/test/resources</directory>
-            <filtering>true</filtering>
-          </testResource>
+            <testResource>
+                <directory>${basedir}/src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
         </testResources>
 
         <plugins>
@@ -226,6 +226,13 @@
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
             <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>jakarta.inject</groupId>
@@ -467,6 +474,10 @@
         <surefire.security.argline>-Djava.security.manager -Djava.security.policy=${project.build.directory}/test-classes/surefire.policy</surefire.security.argline>
         <java21.build.outputDirectory>${project.build.directory}/classes-java21</java21.build.outputDirectory>
         <java21.sourceDirectory>${project.basedir}/src/main/java21</java21.sourceDirectory>
+        <surefire.coverage.argline>
+            --add-reads org.glassfish.jersey.core.common=ALL-UNNAMED
+            --add-modules=ALL-MODULE-PATH
+        </surefire.coverage.argline>
     </properties>
 
 </project>

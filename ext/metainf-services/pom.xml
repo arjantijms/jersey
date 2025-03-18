@@ -61,6 +61,9 @@
                         <!-- Do not warn about using sun.misc.Unsafe -->
                         <XDignore.symbol.file />
                     </compilerArguments>
+                    <compilerArgs>
+                        <arg>-Xdiags:verbose</arg>
+                    </compilerArgs>
                     <showWarnings>false</showWarnings>
                     <fork>false</fork>
                 </configuration>
