@@ -41,7 +41,8 @@
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-client</artifactId>
-            <version>5.0.10.Final</version> <!-- Can use 3.5.16.Final -->
+            <version>6.0.3.Final</version> <!-- according to https://docs.resteasy.dev/6.2/userguide/ -->
+<!--            the 6.0.x versions are for Jakarta EE9 (Jakarta RESTful Web Services API 3.0 )-->
             <exclusions>
                 <exclusion>
                     <artifactId>commons-logging</artifactId>
@@ -74,6 +75,11 @@
         <dependency>
             <groupId>org.glassfish.jersey.test-framework.providers</groupId>
             <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
             <scope>test</scope>
         </dependency>
 

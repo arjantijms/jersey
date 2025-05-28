@@ -2217,13 +2217,13 @@
         <freemarker.version>2.3.33</freemarker.version>
         <gae.version>2.0.36</gae.version>
         <groovy.version>5.0.0-alpha-12</groovy.version>
-        <groovy.jdk8.version>4.0.24</groovy.jdk8.version>
+        <groovy.jdk8.version>4.0.27</groovy.jdk8.version>
         <gson.version>2.13.1</gson.version>
 
         <!--versions, extracted here due to maven-enforcer-plugin -->
         <!--        <commons.codec.version>1.15</commons.codec.version>-->
         <com.uber.jaeger.version>0.27.0</com.uber.jaeger.version>
-        <org.codehaus.gmavenplus.version>3.0.2</org.codehaus.gmavenplus.version>
+        <org.codehaus.gmavenplus.version>4.2.0</org.codehaus.gmavenplus.version>
         <!-- end of versions extracted here due to maven-enforcer-plugin -->
 
         <!-- micrometer -->
