@@ -2099,7 +2099,7 @@
         <buildhelper.mvn.plugin.version>3.6.0</buildhelper.mvn.plugin.version>
         <buildnumber.mvn.plugin.version>3.2.1</buildnumber.mvn.plugin.version>
         <checkstyle.mvn.plugin.version>3.6.0</checkstyle.mvn.plugin.version>
-        <checkstyle.version>10.23.1</checkstyle.version>
+        <checkstyle.version>10.21.4</checkstyle.version>
         <compiler.mvn.plugin.version>3.14.0</compiler.mvn.plugin.version>
         <!--
         Special version of the compiler plugin just for the jersey-common. All versions above
