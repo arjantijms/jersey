@@ -157,8 +157,22 @@ public abstract class InboundMessageContext extends MessageHeaderMethods impleme
      *                      as required by JAX-RS specification on the server side.
      */
     public InboundMessageContext(Configuration configuration, boolean translateNce) {
+        this(configuration, HeaderUtils.createInbound(), translateNce);
+    }
+
+    /**
+     * Create new inbound message context.
+     *
+     * @param configuration the related client/server side {@link Configuration}. If {@code null},
+     *                      the default behaviour is expected.
+     * @param httpHeaders   the http headers map.
+     * @param translateNce  if {@code true}, the {@link javax.ws.rs.core.NoContentException} thrown by a
+     *                      selected message body reader will be translated into a {@link javax.ws.rs.BadRequestException}
+     *                      as required by JAX-RS specification on the server side.
+     */
+    public InboundMessageContext(Configuration configuration, MultivaluedMap<String, String> httpHeaders, boolean translateNce) {
         super(configuration);
-        this.headers = new GuardianStringKeyMultivaluedMap<>(HeaderUtils.createInbound());
+        this.headers = new GuardianStringKeyMultivaluedMap<>(httpHeaders);
         this.entityContent = new EntityContent();
         this.translateNce = translateNce;
         this.configuration = configuration;
@@ -302,7 +316,11 @@ public abstract class InboundMessageContext extends MessageHeaderMethods impleme
         }
 
         final Iterator<String> valuesIterator = values.iterator();
-        StringBuilder buffer = new StringBuilder(valuesIterator.next());
+        String next = valuesIterator.next();
+        if (next == null) {
+            next = "";
+        }
+        StringBuilder buffer = new StringBuilder(next);
         while (valuesIterator.hasNext()) {
             buffer.append(',').append(valuesIterator.next());
         }
