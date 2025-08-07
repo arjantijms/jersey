@@ -28,8 +28,6 @@ import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.NewCookie;
 
 import org.glassfish.jersey.internal.LocalizationMessages;
-import org.glassfish.jersey.http.JerseyCookie;
-import org.glassfish.jersey.http.JerseyNewCookie;
 
 /**
  * Cookies parser.
@@ -45,7 +43,7 @@ public class CookiesParser {
 
         String name;
         String value;
-        Integer version = null;
+        int version = Cookie.DEFAULT_VERSION;
         String path = null;
         String domain = null;
 
@@ -55,14 +53,14 @@ public class CookiesParser {
         }
 
         public Cookie getImmutableCookie() {
-            return new JerseyCookie.Builder(name).version(version).value(value).path(path).domain(domain).build();
+            return new Cookie(name, value, path, domain, version);
         }
     }
 
     public static Map<String, Cookie> parseCookies(String header) {
         String bites[] = header.split("[;,]");
         Map<String, Cookie> cookies = new LinkedHashMap<String, Cookie>();
-        Integer version = null;
+        int version = 0;
         MutableCookie cookie = null;
         for (String bite : bites) {
             String crumbs[] = bite.split("=", 2);
@@ -125,7 +123,7 @@ public class CookiesParser {
         String value = null;
         String path = null;
         String domain = null;
-        Integer version = null;
+        int version = Cookie.DEFAULT_VERSION;
         String comment = null;
         int maxAge = NewCookie.DEFAULT_MAX_AGE;
         boolean secure = false;
@@ -139,8 +137,7 @@ public class CookiesParser {
         }
 
         public NewCookie getImmutableNewCookie() {
-            return new JerseyNewCookie.Builder(name).version(version).value(value).path(path).domain(domain).comment(comment)
-                    .maxAge(maxAge).expiry(expiry).secure(secure).httpOnly(httpOnly).sameSite(sameSite).build();
+            return new NewCookie(name, value, path, domain, version, comment, maxAge, expiry, secure, httpOnly, sameSite);
         }
     }
 

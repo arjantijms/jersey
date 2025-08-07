@@ -22,8 +22,6 @@ import java.io.PushbackInputStream;
 
 import jakarta.ws.rs.ProcessingException;
 
-import org.glassfish.jersey.innate.io.StreamListener;
-import org.glassfish.jersey.innate.io.StreamListenerCouple;
 import org.glassfish.jersey.innate.io.InputStreamWrapper;
 import org.glassfish.jersey.internal.LocalizationMessages;
 
@@ -39,9 +37,6 @@ import org.glassfish.jersey.internal.LocalizationMessages;
 public class EntityInputStream extends InputStreamWrapper {
 
     private InputStream input;
-
-    private StreamListener listener;
-
     private boolean closed = false;
 
     /**
@@ -98,12 +93,13 @@ public class EntityInputStream extends InputStreamWrapper {
      */
     @Override
     public void close() throws ProcessingException {
-        if (input == null) {
+        final InputStream in = input;
+        if (in == null) {
             return;
         }
         if (!closed) {
             try {
-                input.close();
+                in.close();
             } catch (IOException ex) {
                 // This e.g. means that the underlying socket stream got closed by other thread somehow...
                 throw new ProcessingException(LocalizationMessages.MESSAGE_CONTENT_INPUT_STREAM_CLOSE_FAILED(), ex);
@@ -123,46 +119,43 @@ public class EntityInputStream extends InputStreamWrapper {
      */
     public boolean isEmpty() {
         ensureNotClosed();
-        if (input == null) {
+
+        final InputStream in = input;
+        if (in == null) {
             return true;
         }
 
         try {
             // Try #markSupported first - #available on WLS waits until socked timeout is reached when chunked encoding is used.
-            if (input.markSupported()) {
-                input.mark(1);
-                int i = input.read();
-                input.reset();
+            if (in.markSupported()) {
+                in.mark(1);
+                int i = in.read();
+                in.reset();
                 return i == -1;
             } else {
-                int availableBytes = 0;
                 try {
-                    availableBytes = input.available();
+                    if (in.available() > 0) {
+                        return false;
+                    }
                 } catch (IOException ioe) {
                     // NOOP. Try other approaches as this can fail on WLS.
                 }
 
-                if (availableBytes > 0) {
-                    return false;
+                int b = in.read();
+                if (b == -1) {
+                    return true;
                 }
 
-                if (listener != null) {
-                    try {
-                        if (!listener.isReady()) {
-                            return false;
-                        }
-                        return listener.isEmpty();
-                    } catch (IllegalStateException ex) {
-                        // NOOP. Listener failed to process the emptiness, the final method to be applied
-                    }
+                PushbackInputStream pbis;
+                if (in instanceof PushbackInputStream) {
+                    pbis = (PushbackInputStream) in;
+                } else {
+                    pbis = new PushbackInputStream(in, 1);
+                    input = pbis;
                 }
+                pbis.unread(b);
 
-                final PushbackInputStream in = (input instanceof PushbackInputStream) ? (PushbackInputStream) input
-                       : new PushbackInputStream(input);
-                int i = in.read();
-                in.unread(i);
-                input = in;
-                return i == -1;
+                return false;
             }
         } catch (IOException ex) {
             throw new ProcessingException(ex);
@@ -195,7 +188,7 @@ public class EntityInputStream extends InputStreamWrapper {
      * @return wrapped input stream instance.
      */
     public final InputStream getWrappedStream() {
-        return getWrapped();
+        return input;
     }
 
     /**
@@ -208,21 +201,7 @@ public class EntityInputStream extends InputStreamWrapper {
     }
 
     @Override
-    public InputStream getWrapped() {
+    protected InputStream getWrapped() {
         return input;
-    }
-
-    /**
-     * Decomposes existing {@link EntityInputStream} into this input stream
-     * @param stream instance of the {@link EntityInputStream}
-     */
-    public void wrapExternalStream(StreamListenerCouple stream) {
-        input = new InputStreamWrapper() {
-            @Override
-            public InputStream getWrapped() {
-                return stream.getExternalStream();
-            }
-        };
-        listener = stream.getListener();
     }
 }

@@ -17,6 +17,7 @@
 package org.glassfish.jersey.servlet;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.lang.reflect.Type;
 import java.net.URI;
@@ -56,6 +57,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.glassfish.jersey.innate.io.InputStreamWrapper;
 import org.glassfish.jersey.internal.ServiceFinderBinder;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.internal.inject.InjectionManager;
@@ -423,15 +425,11 @@ public class WebComponent {
             final ResponseWriter responseWriter) throws IOException {
 
         try {
-            boolean waitForInputEnable = requestContext.resolveProperty(ServletProperties.WAIT_FOR_INPUT, Boolean.TRUE);
-            long waitForInputTimeOut = requestContext.resolveProperty(ServletProperties.WAIT_FOR_INPUT_TIMEOUT,
-                    ServletProperties.WAIT_FOR_INPUT_DEFAULT_TIMEOUT);
-            requestContext.wrapEntityInputStream(new ServletEntityInputStream(waitForInputEnable,
-                    waitForInputTimeOut) {
-                private ServletInputStream wrappedStream;
+            requestContext.setEntityStream(new InputStreamWrapper() {
 
+                private ServletInputStream wrappedStream;
                 @Override
-                protected ServletInputStream getWrappedStream() {
+                protected InputStream getWrapped() {
                     if (wrappedStream == null) {
                         try {
                             wrappedStream = servletRequest.getInputStream();
