@@ -23,6 +23,7 @@ import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.RuntimeType;
@@ -449,13 +450,18 @@ public class WebComponent {
 
         try {
             requestContext.setEntityStream(new InputStreamWrapper() {
+
+                private ServletInputStream wrappedStream;
                 @Override
                 protected InputStream getWrapped() {
-                    try {
-                        return servletRequest.getInputStream();
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
+                    if (wrappedStream == null) {
+                        try {
+                            wrappedStream = servletRequest.getInputStream();
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
                     }
+                    return wrappedStream;
                 }
             });
         } catch (UncheckedIOException e) {

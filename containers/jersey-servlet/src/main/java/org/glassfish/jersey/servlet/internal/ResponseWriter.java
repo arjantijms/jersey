@@ -115,6 +115,10 @@ public class ResponseWriter implements ContainerResponseWriter {
     @Override
     public OutputStream writeResponseStatusAndHeaders(final long contentLength, final ContainerResponse responseContext)
             throws ContainerException {
+        if (asyncExt.isCompleted()) {
+            return null;
+        }
+
         this.responseContext.complete(responseContext);
 
         // first set the content length, so that if headers have an explicit value, it takes precedence over this one

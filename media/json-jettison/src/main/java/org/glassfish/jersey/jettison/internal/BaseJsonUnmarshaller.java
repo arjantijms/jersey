@@ -21,6 +21,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
@@ -61,7 +62,7 @@ public class BaseJsonUnmarshaller implements JettisonUnmarshaller, JettisonConfi
 
     // JsonUnmarshaller
     public <T> T unmarshalFromJSON(InputStream inputStream, Class<T> expectedType) throws JAXBException {
-        return unmarshalFromJSON(new InputStreamReader(inputStream, UTF_8), expectedType);
+        return unmarshalFromJSON(new InputStreamReader(inputStream, StandardCharsets.UTF_8), expectedType);
     }
 
     @SuppressWarnings("unchecked")
@@ -74,7 +75,7 @@ public class BaseJsonUnmarshaller implements JettisonUnmarshaller, JettisonConfi
     }
 
     public <T> JAXBElement<T> unmarshalJAXBElementFromJSON(InputStream inputStream, Class<T> declaredType) throws JAXBException {
-        return unmarshalJAXBElementFromJSON(new InputStreamReader(inputStream, UTF_8), declaredType);
+        return unmarshalJAXBElementFromJSON(new InputStreamReader(inputStream, StandardCharsets.UTF_8), declaredType);
     }
 
     public <T> JAXBElement<T> unmarshalJAXBElementFromJSON(Reader reader, Class<T> declaredType) throws JAXBException {

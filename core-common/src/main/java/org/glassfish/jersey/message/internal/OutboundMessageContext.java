@@ -39,6 +39,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.MultivaluedMap;
 
 import org.glassfish.jersey.CommonProperties;
+import org.glassfish.jersey.innate.io.SafelyClosable;
 import org.glassfish.jersey.internal.RuntimeDelegateDecorator;
 import org.glassfish.jersey.internal.util.ReflectionHelper;
 import org.glassfish.jersey.internal.util.collection.GuardianStringKeyMultivaluedMap;
@@ -52,7 +53,7 @@ import org.glassfish.jersey.io.spi.FlushedCloseable;
  *
  * @author Marek Potociar
  */
-public class OutboundMessageContext extends MessageHeaderMethods {
+public class OutboundMessageContext extends MessageHeaderMethods implements SafelyClosable {
     private static final Annotation[] EMPTY_ANNOTATIONS = new Annotation[0];
     private static final List<MediaType> WILDCARD_ACCEPTABLE_TYPE_SINGLETON_LIST =
             Collections.<MediaType>singletonList(MediaTypes.WILDCARD_ACCEPTABLE_TYPE);
@@ -133,7 +134,7 @@ public class OutboundMessageContext extends MessageHeaderMethods {
      */
     @Deprecated
     public OutboundMessageContext() {
-        this ((Configuration) null);
+        this((Configuration) null);
     }
 
     /**

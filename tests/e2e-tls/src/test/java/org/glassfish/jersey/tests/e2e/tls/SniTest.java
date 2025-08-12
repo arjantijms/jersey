@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, 2024 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2023, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -22,6 +22,7 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 import org.glassfish.jersey.client.spi.ConnectorProvider;
+import org.glassfish.jersey.internal.util.JdkVersion;
 import org.glassfish.jersey.jdk.connector.JdkConnectorProvider;
 import org.glassfish.jersey.jnh.connector.JavaNetHttpConnectorProvider;
 import org.glassfish.jersey.netty.connector.NettyConnectorProvider;
@@ -47,6 +48,7 @@ import java.util.concurrent.TimeoutException;
 public class SniTest {
     private static final int PORT = 8443;
     private static final String LOCALHOST = "127.0.0.1";
+    private static JdkVersion jdkVersion = JdkVersion.getJdkVersion();
 
     static {
 // Debug
@@ -120,7 +122,7 @@ public class SniTest {
                 .path("host")
                 .request();
         if (!JavaNetHttpConnectorProvider.class.isInstance(provider)) {
-            builder = builder.header(HttpHeaders.HOST, hostName + ":8080");
+            builder = builder.header(HttpHeaders.HOST, hostName + ":" + PORT);
         }
         try (Response r = builder.get()) {
             // empty
