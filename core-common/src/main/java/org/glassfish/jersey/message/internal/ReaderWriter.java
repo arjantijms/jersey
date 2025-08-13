@@ -178,11 +178,23 @@ public final class ReaderWriter {
         }
         return sb.toString();
     }
+
     /**
-     * The maximum size of array to allocate.
+     * Read/convert stream to the byte array.
+     *
+     * @param in stream to be converted to the byte array
+     * @return the byte array
+     * @throws IOException if there is an error reading from the stream
+     * @since 2.47
+     */
+    public static byte[] readFromAsBytes(InputStream in) throws IOException {
+        return readAllBytes(in);
+    }
+    /**
+     * The maximum size of an array to allocate.
      * Some VMs reserve some header words in an array.
      * Attempts to allocate larger arrays may result in
-     * OutOfMemoryError: Requested array size exceeds VM limit
+     * OutOfMemoryError: Requested array size exceeds the VM limit
      */
     private static final int MAX_BUFFER_SIZE = Integer.MAX_VALUE - 8;
 

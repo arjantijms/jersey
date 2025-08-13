@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
@@ -66,7 +67,7 @@ public class BaseJsonMarshaller implements JettisonMarshaller, JettisonConfigure
             throw new IllegalArgumentException("The output stream is null");
         }
 
-        marshallToJSON(o, new OutputStreamWriter(outputStream, UTF_8));
+        marshallToJSON(o, new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
     }
 
     public void marshallToJSON(Object o, Writer writer) throws JAXBException {

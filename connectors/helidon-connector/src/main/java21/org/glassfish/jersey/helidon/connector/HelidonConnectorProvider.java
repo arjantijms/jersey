@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, 2024 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -68,9 +68,6 @@ import java.io.OutputStream;
 public class HelidonConnectorProvider extends io.helidon.jersey.connector.HelidonConnectorProvider {
     @Override
     public Connector getConnector(Client client, Configuration runtimeConfig) {
-        if (JdkVersion.getJdkVersion().getMajor() < 21) {
-            throw new ProcessingException(LocalizationMessages.NOT_SUPPORTED());
-        }
         return super.getConnector(client, runtimeConfig);
     }
 }
