@@ -94,7 +94,7 @@
                 <jdk>[17,21)</jdk>
             </activation>
             <properties>
-                <javadoc.skip>true</javadoc.skip>
+                <helidon.connector.version>${helidon3.connector.version}</helidon.connector.version>
             </properties>
             <build>
                 <directory>${java17.build.outputDirectory}</directory>
@@ -135,6 +135,8 @@
                 <jdk>[21,)</jdk>
             </activation>
             <build>
+                <!-- 17 is correct, the module works with Helidon 3 supporting JDK 17, too -->
+                <!-- The build is against Helidon 4, which requires JDK 21 for the build, though -->
                 <directory>${java21.build.outputDirectory}</directory>
                 <plugins>
                     <plugin>
@@ -210,7 +212,7 @@
                                 <phase>package</phase>
                                 <configuration>
                                     <target>
-                                        <property name="sources-jar" value="${java17.build.outputDirectory}/${project.artifactId}-${project.version}-sources.jar"/>
+                                        <property name="sources-jar" value="${java21.build.outputDirectory}/${project.artifactId}-${project.version}-sources.jar"/>
                                         <echo>sources-jar: ${sources-jar}</echo>
                                         <zip destfile="${sources-jar}" update="true">
                                             <zipfileset dir="${java21.sourceDirectory}" prefix="META-INF/versions/21"/>

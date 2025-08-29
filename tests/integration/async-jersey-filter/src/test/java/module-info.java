@@ -23,7 +23,7 @@ module org.glassfish.jersey.tests.integration.async.jersey.filter {
 
     requires org.glassfish.jersey.core.common;
     requires org.glassfish.jersey.core.server;
-    requires org.glassfish.jersey.container.servlet.core;
+    requires org.glassfish.jersey.container.servlet;
     requires org.glassfish.jersey.tests.framework.core;
     requires org.glassfish.jersey.tests.framework.provider.external;
 

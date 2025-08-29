@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2024 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2022, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -23,7 +23,9 @@ import org.glassfish.jersey.internal.util.JdkVersion;
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.core.Configuration;
-import java.io.OutputStream;
+import org.glassfish.jersey.internal.util.collection.LazyValue;
+import org.glassfish.jersey.internal.util.collection.Value;
+import org.glassfish.jersey.internal.util.collection.Values;
 
 /**
  * Helidon Connector stub which only throws exception when running on JDK prior to 21.
@@ -32,10 +34,16 @@ import java.io.OutputStream;
  * @since 3.0.5
  */
 public class HelidonConnectorProvider implements ConnectorProvider {
+
+    private static final LazyValue<Helidon3ConnectorProvider> helidon3ConnectorProvider =
+            Values.lazy((Value<Helidon3ConnectorProvider>) Helidon3ConnectorProvider::new);
+
     @Override
     public Connector getConnector(Client client, Configuration runtimeConfig) {
-        if (JdkVersion.getJdkVersion().getMajor() < 21) {
-            throw new ProcessingException(LocalizationMessages.NOT_SUPPORTED());
+        if (HelidonVersionChecker.VERSION.get() == HelidonVersionChecker.Version.VERSION_3) {
+            return helidon3ConnectorProvider.get().getConnector(client, runtimeConfig);
+        } else if (JdkVersion.getJdkVersion().getMajor() < 21) {
+            throw new ProcessingException(LocalizationMessages.HELIDON_4_NOT_SUPPORTED());
         }
         return null;
     }

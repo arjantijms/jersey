@@ -38,7 +38,6 @@
         <module>grizzly2-http</module>
         <module>grizzly2-servlet</module>
         <module>jdk-http</module>
-        <module>jersey-servlet-core</module>
         <module>jersey-servlet</module>
         <module>jetty-http</module>
         <module>jetty-http2</module>
@@ -81,5 +80,17 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>helidon-container</id>
+            <activation>
+                <jdk>[21,)</jdk>
+            </activation>
+            <modules>
+                <module>helidon</module>
+            </modules>
+        </profile>
+    </profiles>
 
 </project>

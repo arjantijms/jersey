@@ -25,13 +25,13 @@
     <parent>
         <groupId>org.glassfish.jersey.tests.integration</groupId>
         <artifactId>project</artifactId>
-        <version>3.5.99-SNAPSHOT</version>
+        <version>4.0.99-SNAPSHOT</version>
     </parent>
 
-    <artifactId>spring-boot</artifactId>
+    <artifactId>resteasy-client</artifactId>
 
     <packaging>war</packaging>
-    <name>jersey-tests-integration-spring6</name>
+    <name>jersey-tests-integration-resteasy-client</name>
 
     <description>
         Jersey tests for Spring.Boot / Resteasy integration
@@ -41,7 +41,7 @@
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-client</artifactId>
-            <version>6.2.11.Final</version>
+            <version>6.2.12.Final</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-logging</artifactId>
@@ -70,6 +70,11 @@
         <dependency>
             <groupId>org.glassfish.jersey.test-framework.providers</groupId>
             <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
             <scope>test</scope>
         </dependency>
 
