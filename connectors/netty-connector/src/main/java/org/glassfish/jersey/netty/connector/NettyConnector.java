@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2024 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2016, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -32,7 +32,6 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -68,6 +67,7 @@ import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.proxy.HttpProxyHandler;
 import io.netty.handler.proxy.ProxyHandler;
 import io.netty.handler.ssl.ApplicationProtocolConfig;
@@ -255,6 +255,8 @@ class NettyConnector implements Connector {
                }
             }
 
+            final JerseyExpectContinueHandler expect100ContinueHandler = new JerseyExpectContinueHandler();
+
             if (chan == null) {
                Integer connectTimeout = jerseyRequest.resolveProperty(ClientProperties.CONNECT_TIMEOUT, 0);
                Bootstrap b = new Bootstrap();
@@ -327,8 +329,8 @@ class NettyConnector implements Connector {
                      final Integer maxInitialLineLength = ClientProperties.getValue(config.getProperties(),
                                 NettyClientProperties.MAX_INITIAL_LINE_LENGTH,
                                 NettyClientProperties.DEFAULT_INITIAL_LINE_LENGTH);
-
                      p.addLast(new HttpClientCodec(maxInitialLineLength, maxHeaderSize, maxChunkSize));
+                     p.addLast(EXPECT_100_CONTINUE_HANDLER, expect100ContinueHandler);
                      p.addLast(new ChunkedWriteHandler());
                      p.addLast(new HttpContentDecompressor());
                     }
@@ -357,11 +359,10 @@ class NettyConnector implements Connector {
             final Channel ch = chan;
             JerseyClientHandler clientHandler =
                     new JerseyClientHandler(jerseyRequest, responseAvailable, responseDone, redirectUriHistory, this);
-            final JerseyExpectContinueHandler expect100ContinueHandler = new JerseyExpectContinueHandler();
+
             // read timeout makes sense really as an inactivity timeout
             ch.pipeline().addLast(READ_TIMEOUT_HANDLER,
                                   new IdleStateHandler(0, 0, timeout, TimeUnit.MILLISECONDS));
-            ch.pipeline().addLast(EXPECT_100_CONTINUE_HANDLER, expect100ContinueHandler);
             ch.pipeline().addLast(REQUEST_HANDLER, clientHandler);
 
             responseDone.whenComplete((_r, th) -> {
@@ -444,29 +445,23 @@ class NettyConnector implements Connector {
 //                      // Set later after the entity is "written"
 //                      break;
                 }
-                try {
-                    expect100ContinueHandler.processExpect100ContinueRequest(nettyRequest, jerseyRequest,
-                            ch, expect100ContinueTimeout);
-                } catch (ExecutionException e) {
-                    responseDone.completeExceptionally(e);
-                } catch (TimeoutException e) {
-                    //Expect:100-continue allows timeouts by the spec
-                    //just removing the pipeline from processing
-                    if (ch.pipeline().context(JerseyExpectContinueHandler.class) != null) {
-                        ch.pipeline().remove(EXPECT_100_CONTINUE_HANDLER);
-                    }
-                }
 
                 final CountDownLatch headersSet = new CountDownLatch(1);
                 final CountDownLatch contentLengthSet = new CountDownLatch(1);
 
+
                 jerseyRequest.setStreamProvider(new OutboundMessageContext.StreamProvider() {
                     @Override
                     public OutputStream getOutputStream(int contentLength) throws IOException {
-                        replaceHeaders(jerseyRequest, nettyRequest.headers()); // WriterInterceptor changes
-                        setHostHeader(jerseyRequest, nettyRequest);
-                        headersSet.countDown();
-
+                        try {
+                            replaceHeaders(jerseyRequest, nettyRequest.headers()); // WriterInterceptor changes
+                            setHostHeader(jerseyRequest, nettyRequest);
+                        } catch (Exception e) {
+                            responseDone.completeExceptionally(e);
+                            throw new IOException(e);
+                        } finally {
+                            headersSet.countDown();
+                        }
                         return entityWriter.getOutputStream();
                     }
                 });
@@ -479,25 +474,55 @@ class NettyConnector implements Connector {
 
                         try {
                             jerseyRequest.writeEntity();
-
                             if (entityWriter.getType() == NettyEntityWriter.Type.DELAYED) {
                                 nettyRequest.headers().set(HttpHeaderNames.CONTENT_LENGTH, entityWriter.getLength());
                                 contentLengthSet.countDown();
                             }
 
-                        } catch (IOException e) {
+                        } catch (Exception e) {
+                            if (entityWriter.getChunkedInput() != null) {
+                                try {
+                                    entityWriter.getChunkedInput().close();
+                                } catch (Exception ex) {
+                                    // Ignore ex in favor of e
+                                }
+                            }
                             responseDone.completeExceptionally(e);
                         }
                     }
                 });
 
                 headersSet.await();
-                if (!expect100ContinueHandler.isExpected()) {
-                    // Send the HTTP request. Expect:100-continue processing is not applicable
-                    // in this case.
+                new Expect100ContinueConnectorExtension().invoke(jerseyRequest, nettyRequest);
+
+                boolean continueExpected = HttpUtil.is100ContinueExpected(nettyRequest);
+                boolean expectationsFailed  = false;
+
+                if (continueExpected) {
+                    final CountDownLatch expect100ContinueLatch = new CountDownLatch(1);
+                    expect100ContinueHandler.attachCountDownLatch(expect100ContinueLatch);
+                    //send expect request, sync and wait till either response or timeout received
                     entityWriter.writeAndFlush(nettyRequest);
+                    expect100ContinueLatch.await(expect100ContinueTimeout, TimeUnit.MILLISECONDS);
+                    try {
+                        expect100ContinueHandler.processExpectationStatus();
+                    } catch (TimeoutException e) {
+                        //Expect:100-continue allows timeouts by the spec
+                        //so, send request directly without Expect header.
+                        expectationsFailed = true;
+                    } finally {
+                        //restore request and handler to the original state.
+                        HttpUtil.set100ContinueExpected(nettyRequest, false);
+                        expect100ContinueHandler.resetHandler();
+                    }
                 }
 
+                if (!continueExpected || expectationsFailed) {
+                    if (expectationsFailed) {
+                        ch.pipeline().writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT).sync();
+                    }
+                    entityWriter.writeAndFlush(nettyRequest);
+                }
                 if (HttpUtil.isTransferEncodingChunked(nettyRequest)) {
                     entityWriter.write(new HttpChunkedInput(entityWriter.getChunkedInput()));
                 } else {
@@ -620,7 +645,7 @@ class NettyConnector implements Connector {
         if (!nettyRequest.headers().contains(HttpHeaderNames.HOST)) {
             int requestPort = jerseyRequest.getUri().getPort();
             final String hostHeader;
-            if (requestPort != 80 && requestPort != 443) {
+            if (requestPort != -1 && requestPort != 80 && requestPort != 443) {
                 hostHeader = jerseyRequest.getUri().getHost() + ":" + requestPort;
             } else {
                 hostHeader = jerseyRequest.getUri().getHost();

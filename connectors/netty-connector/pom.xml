@@ -40,6 +40,8 @@
             --add-opens org.glassfish.jersey.core.common/org.glassfish.jersey.innate.virtual=ALL-UNNAMED
             --add-opens java.base/java.lang=org.glassfish.jersey.netty.connector
             --add-opens java.base/java.lang.reflect=org.glassfish.jersey.netty.connector
+            --add-opens java.base/java.lang=ALL-UNNAMED
+            --add-opens java.base/java.lang.reflect=ALL-UNNAMED
             --add-exports org.glassfish.jersey.core.common/org.glassfish.jersey.innate=ALL-UNNAMED
             --add-modules=ALL-MODULE-PATH
         </surefire.coverage.argline>
@@ -100,26 +102,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>JettyExclude</id>
-            <activation>
-                <jdk>(1.8,17)</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <testExcludes>
-                                <testExclude>org/glassfish/jersey/netty/connector/HugeHeaderTest.java</testExclude>
-                            </testExcludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

@@ -36,7 +36,7 @@
     <dependencies>
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
-            <artifactId>jersey-container-servlet-core</artifactId>
+            <artifactId>jersey-container-servlet</artifactId>
         </dependency>
 
         <dependency>
@@ -69,7 +69,7 @@
                     <loginServices>
                         <loginService implementation="org.eclipse.jetty.security.HashLoginService">
                             <name>my-realm</name>
-                            <config implementation="org.eclipse.jetty.ee10.maven.plugin.MavenResource">
+                            <config implementation="org.eclipse.jetty.maven.MavenResource">
                                 <resourceAsString>${basedir}/src/main/resources/jetty/realm.properties</resourceAsString>
                             </config>
                         </loginService>

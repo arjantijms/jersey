@@ -27,9 +27,12 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Providers;
+
 import org.glassfish.jersey.jackson.internal.DefaultJacksonJaxbJsonProvider;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
 import org.junit.jupiter.api.Assertions;
@@ -40,6 +43,11 @@ import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 public class RestEasyClientTest extends JerseyTest {
 
@@ -62,17 +70,31 @@ public class RestEasyClientTest extends JerseyTest {
 
     @Test
     public void test() throws InterruptedException {
-        try (final ResteasyClient client = new ResteasyClientBuilderImpl().build()) {
-            client.register(TestDefaultJacksonJaxbJsonProvider.class);
-
-            try (final Response r = client.target(target().getUri()).path("/test")
-                    .request().post(Entity.entity("{\"test\": \"test\"}", MediaType.APPLICATION_JSON))) {
-                Object o = r.readEntity(Object.class);
-                Assertions.assertTrue(o.toString().contains("test"));
-                readFromLatch.await();
-                Assertions.assertEquals(0, readFromLatch.getCount(), "DefaultJacksonJaxbJsonProvider has not been used");
+        AtomicReference<String> messageRef = new AtomicReference<>();
+        Logger logger = Logger.getLogger(DefaultJacksonJaxbJsonProvider.class.getName());
+        logger.addHandler(new ConsoleHandler() {
+            @Override
+            public void publish(LogRecord record) {
+                messageRef.set(record.getMessage());
             }
+        });
+        logger.setLevel(Level.FINE);
+
+        final ResteasyClient client = new ResteasyClientBuilderImpl().build();
+
+        client.register(TestDefaultJacksonJaxbJsonProvider.class);
+
+        try (final Response r = client.target(target().getUri()).path("/test")
+                .request().post(Entity.entity("{\"test\": \"test\"}", MediaType.APPLICATION_JSON))) {
+            Object o = r.readEntity(Object.class);
+            Assertions.assertTrue(o.toString().contains("test"));
+            readFromLatch.await();
+            Assertions.assertEquals(0, readFromLatch.getCount(), "DefaultJacksonJaxbJsonProvider has not been used");
         }
+
+        client.close();
+        MatcherAssert.assertThat(messageRef.get(), Matchers.notNullValue());
+
     }
 
     public static class TestDefaultJacksonJaxbJsonProvider extends DefaultJacksonJaxbJsonProvider {

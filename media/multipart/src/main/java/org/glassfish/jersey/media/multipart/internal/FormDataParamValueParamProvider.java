@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2024 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -354,7 +354,7 @@ final class FormDataParamValueParamProvider extends AbstractValueParamProvider {
         @Override
         public EntityPart apply(ContainerRequest request) {
             List<FormDataBodyPart> bodyParts = getEntity(request).getFields(name);
-            return bodyParts.size() != 0 ? bodyParts.get(0) : null;
+            return bodyParts != null && bodyParts.size() != 0 ? bodyParts.get(0) : null;
         }
     }
 

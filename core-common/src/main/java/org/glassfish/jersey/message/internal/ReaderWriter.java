@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -52,20 +52,14 @@ import org.glassfish.jersey.message.MessageProperties;
 public final class ReaderWriter {
 
     private static final Logger LOGGER = Logger.getLogger(ReaderWriter.class.getName());
-    /**
-     * The UTF-8 Charset.
-     *
-     * @deprecated use {@code StandardCharsets.UTF_8} instead
-     */
-    @Deprecated(forRemoval = true)
-    public static final Charset UTF8 = StandardCharsets.UTF_8;
+
     /**
      * The buffer size for arrays of byte and character.
      */
     public static final int BUFFER_SIZE = getBufferSize();
 
     /**
-     * Whether {@linkplain BUFFER_SIZE} is to be ignored in favor of JRE's own decision.
+     * Whether {@linkplain #BUFFER_SIZE} is to be ignored in favor of JRE's own decision.
      */
     public static final boolean AUTOSIZE_BUFFER = getAutosizeBuffer();
 
@@ -184,11 +178,23 @@ public final class ReaderWriter {
         }
         return sb.toString();
     }
+
     /**
-     * The maximum size of array to allocate.
+     * Read/convert stream to the byte array.
+     *
+     * @param in stream to be converted to the byte array
+     * @return the byte array
+     * @throws IOException if there is an error reading from the stream
+     * @since 2.47
+     */
+    public static byte[] readFromAsBytes(InputStream in) throws IOException {
+        return readAllBytes(in);
+    }
+    /**
+     * The maximum size of an array to allocate.
      * Some VMs reserve some header words in an array.
      * Attempts to allocate larger arrays may result in
-     * OutOfMemoryError: Requested array size exceeds VM limit
+     * OutOfMemoryError: Requested array size exceeds the VM limit
      */
     private static final int MAX_BUFFER_SIZE = Integer.MAX_VALUE - 8;
 
@@ -269,9 +275,7 @@ public final class ReaderWriter {
      * @throws IOException in case of a write failure.
      */
     public static void writeToAsString(String s, OutputStream out, MediaType type) throws IOException {
-        Writer osw = new OutputStreamWriter(out, getCharset(type));
-        osw.write(s);
-        osw.flush();
+        out.write(s.getBytes(getCharset(type)));
     }
 
     /**

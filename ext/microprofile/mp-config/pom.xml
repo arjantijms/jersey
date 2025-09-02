@@ -28,6 +28,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>jersey-mp-config</artifactId>
+    <name>jersey-ext-mp-config</name>
 
     <properties>
         <surefire.coverage.argline>
@@ -80,6 +81,13 @@
         </dependency>
 
         <dependency>
+            <groupId>io.smallrye.config</groupId>
+            <artifactId>smallrye-config</artifactId>
+            <version>${smallrye.config.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
@@ -116,20 +124,6 @@
     </build>
 
     <profiles>
-        <profile>
-            <id>smallrye-dependency</id>
-            <activation>
-                <jdk>[11,)</jdk>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>io.smallrye.config</groupId>
-                    <artifactId>smallrye-config</artifactId>
-                    <version>${smallrye.config.version}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
         <profile>
             <id>helidon-config-dependency</id>
             <activation>

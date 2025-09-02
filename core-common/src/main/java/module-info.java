@@ -55,7 +55,7 @@ module org.glassfish.jersey.core.common {
 
     exports org.glassfish.jersey.innate to org.glassfish.jersey.core.client,org.glassfish.jersey.core.server,
                                            org.glassfish.jersey.container.grizzly2.http,
-                                           org.glassfish.jersey.container.servlet.core,
+                                           org.glassfish.jersey.container.servlet,
                                            org.glassfish.jersey.container.jetty.http,
                                            org.glassfish.jersey.netty.connector,
                                            org.glassfish.jersey.ext.mp.rest.client;
@@ -64,7 +64,7 @@ module org.glassfish.jersey.core.common {
                                                   org.glassfish.jersey.core.client,
                                                   org.glassfish.jersey.core.server,
                                                   org.glassfish.jersey.container.grizzly2.http,
-                                                  org.glassfish.jersey.container.servlet.core,
+                                                  org.glassfish.jersey.container.servlet,
                                                   org.glassfish.jersey.container.jetty.http,
                                                   org.glassfish.jersey.media.sse,
                                                   org.glassfish.jersey.media.jaxb,
@@ -84,13 +84,17 @@ module org.glassfish.jersey.core.common {
 
     opens org.glassfish.jersey.innate.virtual to org.glassfish.jersey.container.grizzly2.http,
                                                  org.glassfish.jersey.container.jetty.http;
-    opens org.glassfish.jersey.innate to org.glassfish.jersey.container.servlet.core;
+    opens org.glassfish.jersey.innate to org.glassfish.jersey.container.servlet;
 
     exports org.glassfish.jersey.innate.io to org.glassfish.jersey.core.server,
-                                              org.glassfish.jersey.container.servlet.core,
+                                              org.glassfish.jersey.core.client,
+                                              org.glassfish.jersey.container.servlet,
                                               org.glassfish.jersey.apache5.connector,
                                               org.glassfish.jersey.apache.connector;
     exports org.glassfish.jersey.innate.spi to org.glassfish.jersey.core.client,
+                                               org.glassfish.jersey.core.server,
+                                               org.glassfish.jersey.media.multipart;
+    exports org.glassfish.jersey.io.spi to org.glassfish.jersey.core.server,
                                                org.glassfish.jersey.media.multipart;
     exports org.glassfish.jersey.innate.inject.spi to org.glassfish.jersey.inject.hk2;
 

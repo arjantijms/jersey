@@ -32,7 +32,14 @@
     <description>CDI works on a client on a server resource</description>
 
     <properties>
-        <surefire.coverage.argline>--add-reads org.jboss.logging=java.logging --add-modules=ALL-MODULE-PATH</surefire.coverage.argline>
+        <surefire.coverage.argline>
+            --add-reads org.jboss.logging=java.logging
+            --add-reads org.jboss.logging=weld.core.impl
+            --add-reads org.jboss.logging=weld.environment.common
+            --add-reads org.jboss.logging=weld.se.core
+            --add-reads org.jboss.logging=org.hibernate.validator
+            --add-modules=ALL-MODULE-PATH
+        </surefire.coverage.argline>
     </properties>
 
     <dependencies>

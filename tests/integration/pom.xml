@@ -41,6 +41,7 @@
         <module>ejb-multimodule-reload</module>
         <module>ejb-test-webapp</module>
         <module>externalproperties</module>
+        <module>helidon3-client</module>
         <module>j-376</module>
         <module>j-441</module>
         <module>j-59</module>
@@ -93,9 +94,11 @@
         <module>jersey-4722</module>
         <module>jersey-4949</module>
         <module>jersey-5087</module>
+        <module>jersey-5796</module>
         <module>microprofile</module>
         <module>property-check</module>
         <module>reactive-streams</module>
+        <module>resteasy-client</module>
         <module>security-digest</module>
         <module>servlet-2.5-reload</module>
         <module>servlet-3-gf-async</module>

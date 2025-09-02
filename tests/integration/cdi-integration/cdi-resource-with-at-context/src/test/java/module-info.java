@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2024 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2022, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -23,7 +23,7 @@ module org.glassfish.jersey.tests.integration.cdi.resource.context.test {
     requires org.glassfish.jersey.core.server;
     requires org.glassfish.jersey.ext.cdi1x;
     requires org.glassfish.jersey.ext.weld2.se;
-    requires org.glassfish.jersey.container.servlet.core;
+    requires org.glassfish.jersey.container.servlet;
     requires org.glassfish.jersey.container.grizzly2.http;
 
     requires weld.core.impl;
