@@ -68,7 +68,8 @@ public class TestExceptionResource {
     }
 
     /**
-     * Returns whether a thread that was processing a last request got stuck in {@link ResponseWriter}.
+     * Returns whether a thread that was processing a last request got stuck in
+     * org.glassfish.jersey.servlet.internal.ResponseWriter.
      * <p/>
      * Under normal circumstances, the last processing thread should return back to the servlet container
      * and its pool.
@@ -89,7 +90,7 @@ public class TestExceptionResource {
             case TIMED_WAITING:
             case WAITING:
                 for (StackTraceElement stackTraceElement : lastProcessingThread.getStackTrace()) {
-                    if ("ResponseWriter".equals(stackTraceElement.getClassName())) {
+                    if (stackTraceElement.getClassName().contains("ResponseWriter")) {
                         return true;
                     }
                 }
