@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2025 Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2018 Payara Foundation and/or its affiliates.
  *
  * This program and the accompanying materials are made available under the
@@ -378,7 +378,7 @@ public final class ApplicationHandler implements ContainerLifecycleListener {
 
             if (!disableValidation()) {
                 ComponentModelValidator validator = new ComponentModelValidator(
-                        bootstrapBag.getValueParamProviders(), bootstrapBag.getMessageBodyWorkers());
+                        bootstrapBag.getValueParamProviders(), bootstrapBag.getMessageBodyWorkers(), runtimeConfig);
                     validator.validate(bootstrapBag.getResourceModel());
             }
 
