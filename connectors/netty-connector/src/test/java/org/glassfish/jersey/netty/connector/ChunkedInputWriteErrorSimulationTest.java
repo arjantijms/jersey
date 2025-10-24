@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2024, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -223,9 +223,12 @@ public class ChunkedInputWriteErrorSimulationTest extends JerseyTest {
         return new ConnectorProvider() {
             @Override
             public Connector getConnector(Client client, Configuration runtimeConfig) {
-                return new NettyConnector(client) {
-                    NettyEntityWriter nettyEntityWriter(ClientRequest clientRequest, Channel channel) {
-                        NettyEntityWriter wrapped = NettyEntityWriter.getInstance(clientRequest, channel);
+                return new NettyConnector(client, NettyConnectorProvider.config().rw()) {
+                    @Override
+                    NettyEntityWriter nettyEntityWriter(
+                            ClientRequest clientRequest, Channel channel, NettyConnectorProvider.Config.RW config) {
+                        NettyEntityWriter wrapped = NettyEntityWriter.getInstance(
+                                clientRequest, channel, () -> config.requestEntityProcessing(clientRequest));
 
                         JerseyChunkedInput chunkedInput = (JerseyChunkedInput) wrapped.getChunkedInput();
                         try {

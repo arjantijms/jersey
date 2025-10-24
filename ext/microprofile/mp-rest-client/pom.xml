@@ -121,6 +121,8 @@
                             ${cdi.osgi.version},
                             ${jakarta.decorator.osgi.version},
                             org.eclipse.microprofile.config.*;version="!",
+                            org.eclipse.microprofile.rest.client;version="!",
+                            org.eclipse.microprofile.rest.client.*;version="!",
                             ${jakarta.rest.osgi.version},
                             *
                         </Import-Package>
