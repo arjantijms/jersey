@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -25,6 +25,8 @@ import org.glassfish.jersey.internal.Errors;
 import org.glassfish.jersey.message.MessageBodyWorkers;
 import org.glassfish.jersey.server.model.internal.ModelErrors;
 import org.glassfish.jersey.server.spi.internal.ValueParamProvider;
+
+import jakarta.ws.rs.core.Configuration;
 
 /**
  * A resource model validator that checks the given resource model.
@@ -57,10 +59,16 @@ public final class ComponentModelValidator {
     private final List<ResourceModelIssue> issueList = new LinkedList<>();
 
     public ComponentModelValidator(Collection<ValueParamProvider> valueParamProviders, MessageBodyWorkers msgBodyWorkers) {
+        this(valueParamProviders, msgBodyWorkers, null);
+    }
+
+    public ComponentModelValidator(Collection<ValueParamProvider> valueParamProviders,
+                                   MessageBodyWorkers msgBodyWorkers,
+                                   Configuration configuration) {
         validators = new ArrayList<>();
         validators.add(new ResourceValidator());
         validators.add(new RuntimeResourceModelValidator(msgBodyWorkers));
-        validators.add(new ResourceMethodValidator(valueParamProviders));
+        validators.add(new ResourceMethodValidator(valueParamProviders, configuration));
         validators.add(new InvocableValidator());
     }
 

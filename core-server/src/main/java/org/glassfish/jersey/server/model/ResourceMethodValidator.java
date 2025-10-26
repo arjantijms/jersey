@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2020 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -37,10 +37,11 @@ import jakarta.ws.rs.MatrixParam;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.sse.SseEventSink;
+import jakarta.ws.rs.core.Configuration;
 
 import org.glassfish.jersey.internal.Errors;
 import org.glassfish.jersey.server.ContainerRequest;
+import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.server.internal.LocalizationMessages;
 import org.glassfish.jersey.server.model.internal.SseTypeResolver;
 import org.glassfish.jersey.server.spi.internal.ParameterValueHelper;
@@ -55,9 +56,15 @@ import org.glassfish.jersey.server.spi.internal.ValueParamProvider;
 class ResourceMethodValidator extends AbstractResourceModelVisitor {
 
     private final Collection<ValueParamProvider> valueParamProviders;
+    private final Configuration configuration;
 
     ResourceMethodValidator(Collection<ValueParamProvider> valueParamProviders) {
+        this(valueParamProviders, null);
+    }
+
+    ResourceMethodValidator(Collection<ValueParamProvider> valueParamProviders, Configuration configuration) {
         this.valueParamProviders = valueParamProviders;
+        this.configuration = configuration;
     }
 
     @Override
@@ -100,7 +107,7 @@ class ResourceMethodValidator extends AbstractResourceModelVisitor {
             }
 
             // ensure GET does not consume an entity parameter, if not inflector-based
-            if (invocable.requiresEntity() && !invocable.isInflector()) {
+            if (invocable.requiresEntity() && !invocable.isInflector() && !shouldIgnoreGetConsumesEntityWarnings(configuration)) {
                 Errors.warning(method, LocalizationMessages.GET_CONSUMES_ENTITY(invocable.getHandlingMethod()));
             }
             // ensure GET does not consume any @FormParam annotated parameter
@@ -152,6 +159,16 @@ class ResourceMethodValidator extends AbstractResourceModelVisitor {
         if (httpMethodAnnotations.size() != 0) {
             checkUnexpectedAnnotations(method);
         }
+    }
+
+    private static Boolean shouldIgnoreGetConsumesEntityWarnings(Configuration configuration) {
+        if (configuration == null) {
+            return Boolean.FALSE;
+        }
+        return ServerProperties.getValue(configuration.getProperties(),
+                ServerProperties.RESOURCE_VALIDATION_IGNORE_GET_CONSUMES_ENTITY_WARNINGS,
+                Boolean.FALSE,
+                Boolean.class);
     }
 
     private void checkUnexpectedAnnotations(ResourceMethod resourceMethod) {
