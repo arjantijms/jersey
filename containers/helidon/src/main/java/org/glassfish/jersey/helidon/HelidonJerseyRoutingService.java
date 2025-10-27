@@ -25,6 +25,7 @@ import io.helidon.http.Header;
 import io.helidon.http.HeaderNames;
 import io.helidon.http.HeaderValues;
 import io.helidon.http.InternalServerException;
+import io.helidon.http.ServerResponseHeaders;
 import io.helidon.http.Status;
 import io.helidon.webserver.KeyPerformanceIndicatorSupport;
 import io.helidon.webserver.http.HttpRules;
@@ -52,12 +53,9 @@ import java.io.UncheckedIOException;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.security.Principal;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -97,7 +95,7 @@ class HelidonJerseyRoutingService implements HttpService {
     }
 
     private ApplicationHandler appHandler() {
-        return bridge.getContainer().getApplicationHandler();
+        return container().getApplicationHandler();
     }
 
     private Container container() {
@@ -117,8 +115,7 @@ class HelidonJerseyRoutingService implements HttpService {
     @Override
     public void afterStop() {
         try {
-            final InjectionManager ij = appHandler().getInjectionManager();
-            appHandler().onShutdown(bridge.getContainer());
+            appHandler().onShutdown(container());
         } catch (Exception e) {
             if (LOGGER.isLoggable(System.Logger.Level.DEBUG)) {
                 LOGGER.log(System.Logger.Level.DEBUG, "Exception during shutdown of Jersey", e);
@@ -140,6 +137,11 @@ class HelidonJerseyRoutingService implements HttpService {
     }
 
     private void doHandle(final Context ctx, final ServerRequest req, final ServerResponse res) {
+        ServerResponseHeaders savedResponseHeaders = null;
+        if (req.listenerContext().config().restoreResponseHeaders()) {
+            savedResponseHeaders = ServerResponseHeaders.create(res.headers());
+        }
+
         final BaseUriRequestUri uris = BaseUriRequestUri.resolve(req);
         final ContainerRequest requestContext = new ContainerRequest(uris.baseUri,
                 uris.requestUri,
@@ -189,6 +191,9 @@ class HelidonJerseyRoutingService implements HttpService {
                     final RoutingResponse routing = (RoutingResponse) res;
                     if (routing.reset()) {
                         res.status(Status.OK_200);
+                        if (savedResponseHeaders != null) {
+                            savedResponseHeaders.forEach(res::header);
+                        }
                         routing.next();
                     }
                 }

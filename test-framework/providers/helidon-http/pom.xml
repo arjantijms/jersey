@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.glassfish.jersey.test-framework.providers</groupId>
         <artifactId>project</artifactId>
-        <version>4.0.99-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>jersey-test-framework-provider-helidon</artifactId>
@@ -42,6 +42,17 @@
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-helidon-http</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.helidon.webserver</groupId>
+            <artifactId>helidon-webserver</artifactId>
+            <version>${helidon.container.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.helidon.service</groupId>
+            <artifactId>helidon-service-registry</artifactId>
+            <version>${helidon.container.version}</version>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2024, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -29,7 +29,6 @@ import org.glassfish.jersey.internal.JaxrsProviders;
 import org.glassfish.jersey.internal.inject.ServiceHolder;
 import org.glassfish.jersey.internal.spi.AutoDiscoverable;
 import org.glassfish.jersey.message.MessageBodyWorkers;
-import org.glassfish.jersey.message.internal.MessageBodyFactory;
 import org.glassfish.jersey.spi.ContextResolvers;
 import org.glassfish.jersey.spi.ExceptionMappers;
 import org.junit.jupiter.api.Assertions;
@@ -96,7 +95,7 @@ public class ClientBindingsTest extends ClientTestParent {
         injectionManager.completeRegistration();
         // new AutoDiscoverableConfigurator(RuntimeType.CLIENT).init(injectionManager, new ClientBootstrapBag()); config
         new ClientBootstrapPreinitialization().preregister(RuntimeType.CLIENT, injectionManager);
-        assertMultiple(AutoDiscoverable.class, 2, "LoggingFeatureAutoDiscoverable");
+        assertOneInstance(AutoDiscoverable.class, "LoggingFeatureAutoDiscoverable");
     }
 
     @Test

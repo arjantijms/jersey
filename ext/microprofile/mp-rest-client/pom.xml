@@ -22,7 +22,7 @@
     <parent>
         <artifactId>project</artifactId>
         <groupId>org.glassfish.jersey.ext.microprofile</groupId>
-        <version>4.0.99-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -117,6 +117,8 @@
                             ${cdi.osgi.version},
                             ${jakarta.decorator.osgi.version},
                             org.eclipse.microprofile.config.*;version="!",
+                            org.eclipse.microprofile.rest.client;version="!",
+                            org.eclipse.microprofile.rest.client.*;version="!",
                             ${jakarta.rest.osgi.version},
                             *
                         </Import-Package>

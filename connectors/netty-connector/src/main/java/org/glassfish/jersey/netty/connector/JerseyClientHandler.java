@@ -30,7 +30,6 @@ import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
 
-import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.ClientRequest;
 import org.glassfish.jersey.client.ClientResponse;
 import org.glassfish.jersey.http.HttpHeaders;
@@ -55,17 +54,14 @@ import org.glassfish.jersey.uri.internal.JerseyUriBuilder;
  */
 class JerseyClientHandler extends SimpleChannelInboundHandler<HttpObject> {
 
-    private static final int DEFAULT_MAX_REDIRECTS = 5;
-
     // Modified only by the same thread. No need to synchronize it.
     private final Set<URI> redirectUriHistory;
     private final ClientRequest jerseyRequest;
     private final CompletableFuture<ClientResponse> responseAvailable;
     private final CompletableFuture<?> responseDone;
-    private final boolean followRedirects;
-    private final int maxRedirects;
     private final NettyConnector connector;
     private final NettyHttpRedirectController redirectController;
+    private final NettyConnectorProvider.Config.RW requestConfiguration;
 
     private NettyInputStream nis;
     private ClientResponse jerseyResponse;
@@ -73,19 +69,20 @@ class JerseyClientHandler extends SimpleChannelInboundHandler<HttpObject> {
     private boolean readTimedOut;
 
     JerseyClientHandler(ClientRequest request, CompletableFuture<ClientResponse> responseAvailable,
-                        CompletableFuture<?> responseDone, Set<URI> redirectUriHistory, NettyConnector connector) {
+                        CompletableFuture<?> responseDone, Set<URI> redirectUriHistory, NettyConnector connector,
+                        NettyConnectorProvider.Config.RW requestConfiguration) {
         this.redirectUriHistory = redirectUriHistory;
         this.jerseyRequest = request;
         this.responseAvailable = responseAvailable;
         this.responseDone = responseDone;
-        // Follow redirects by default
-        this.followRedirects = jerseyRequest.resolveProperty(ClientProperties.FOLLOW_REDIRECTS, true);
-        this.maxRedirects = jerseyRequest.resolveProperty(NettyClientProperties.MAX_REDIRECTS, DEFAULT_MAX_REDIRECTS);
+        this.requestConfiguration = requestConfiguration;
         this.connector = connector;
+        // Follow redirects by default
+        requestConfiguration.followRedirects(jerseyRequest);
+        requestConfiguration.maxRedirects(jerseyRequest);
 
-        final NettyHttpRedirectController customRedirectController = jerseyRequest
-                .resolveProperty(NettyClientProperties.HTTP_REDIRECT_CONTROLLER, NettyHttpRedirectController.class);
-        this.redirectController = customRedirectController == null ? new NettyHttpRedirectController() : customRedirectController;
+        this.redirectController = requestConfiguration.redirectController(jerseyRequest);
+        this.redirectController.init(requestConfiguration);
     }
 
     @Override
@@ -111,7 +108,7 @@ class JerseyClientHandler extends SimpleChannelInboundHandler<HttpObject> {
           ClientResponse cr = jerseyResponse;
           jerseyResponse = null;
           int responseStatus = cr.getStatus();
-          if (followRedirects
+          if (Boolean.TRUE.equals(requestConfiguration.followRedirects())
                   && (responseStatus == ResponseStatus.Redirect3xx.MOVED_PERMANENTLY_301.getStatusCode()
                           || responseStatus == ResponseStatus.Redirect3xx.FOUND_302.getStatusCode()
                           || responseStatus == ResponseStatus.Redirect3xx.SEE_OTHER_303.getStatusCode()
@@ -138,16 +135,17 @@ class JerseyClientHandler extends SimpleChannelInboundHandler<HttpObject> {
                           // infinite loop detection
                           responseAvailable.completeExceptionally(
                                   new RedirectException(LocalizationMessages.REDIRECT_INFINITE_LOOP()));
-                      } else if (redirectUriHistory.size() > maxRedirects) {
+                      } else if (redirectUriHistory.size() > requestConfiguration.maxRedirects.get()) {
                           // maximal number of redirection
-                          responseAvailable.completeExceptionally(
-                                  new RedirectException(LocalizationMessages.REDIRECT_LIMIT_REACHED(maxRedirects)));
+                          responseAvailable.completeExceptionally(new RedirectException(
+                                  LocalizationMessages.REDIRECT_LIMIT_REACHED(requestConfiguration.maxRedirects.get())));
                       } else {
                           ClientRequest newReq = new ClientRequest(jerseyRequest);
                           newReq.setUri(newUri);
                           ctx.close();
                           if (redirectController.prepareRedirect(newReq, cr)) {
-                              final NettyConnector newConnector = new NettyConnector(newReq.getClient());
+                              final NettyConnector newConnector =
+                                      new NettyConnector(newReq.getClient(), connector.clientConfiguration);
                               newConnector.execute(newReq, redirectUriHistory, new CompletableFuture<ClientResponse>() {
                                   @Override
                                   public boolean complete(ClientResponse value) {

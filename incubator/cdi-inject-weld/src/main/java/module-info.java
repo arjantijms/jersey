@@ -36,6 +36,7 @@ module org.glassfish.jersey.incubator.cdi.inject.weld {
             weld.core.impl;
     exports org.glassfish.jersey.inject.weld.managed to org.glassfish.jersey.core.common;
 
+    opens org.glassfish.jersey.inject.weld.internal.bean to weld.core.impl;
     opens org.glassfish.jersey.inject.weld.internal.managed to weld.core.impl;
     opens org.glassfish.jersey.inject.weld.internal.scope to weld.core.impl;
     opens org.glassfish.jersey.inject.weld.managed to weld.core.impl;

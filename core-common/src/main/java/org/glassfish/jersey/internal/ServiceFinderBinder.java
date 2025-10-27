@@ -58,8 +58,9 @@ public class ServiceFinderBinder<T> extends InternalBinder {
     @Override
     protected void configure() {
         if (PropertiesHelper.isMetaInfServicesEnabled(applicationProperties, runtimeType)) {
-            for (Class<T> t : ServiceFinder.find(contract, true).toClassArray()) {
-                bind(t).to(contract).id(0);
+            for (Class<T> t : ServiceFinder.service(contract).ignoreNotFound(true).runtimeType(runtimeType).find()
+                    .toClassArray()) {
+                bind(t).to(contract);
             }
         }
     }
