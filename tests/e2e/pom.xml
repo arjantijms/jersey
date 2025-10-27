@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.glassfish.jersey.tests</groupId>
         <artifactId>project</artifactId>
-        <version>4.0.99-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>e2e</artifactId>
@@ -34,9 +34,6 @@
 
     <properties>
         <surefire.security.argline>
-            --add-reads org.jboss.logging=weld.core.impl
-            --add-reads org.jboss.logging=weld.se.core
-            --add-reads org.jboss.logging=weld.environment.common
             --add-reads org.jboss.logging=org.hibernate.validator
         </surefire.security.argline>
     </properties>

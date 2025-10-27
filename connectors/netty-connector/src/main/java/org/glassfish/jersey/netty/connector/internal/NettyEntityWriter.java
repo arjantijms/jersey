@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, 2024 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2023, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -16,9 +16,9 @@
 
 package org.glassfish.jersey.netty.connector.internal;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.handler.stream.ChunkedInput;
-import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.ClientRequest;
 import org.glassfish.jersey.client.RequestEntityProcessing;
 
@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 
 /**
  * The Entity Writer is used to write entity in Netty. One implementation is delayed,
@@ -60,7 +61,7 @@ public interface NettyEntityWriter {
 
     /**
      * Flushes the writen objects. Can throw IOException.
-     * @throws IOException
+     * @throws IOException exception.
      */
     void flush() throws IOException;
 
@@ -68,7 +69,7 @@ public interface NettyEntityWriter {
      * Get the netty Chunked Input to be written.
      * @return The Chunked input instance
      */
-    ChunkedInput getChunkedInput();
+    ChunkedInput<ByteBuf> getChunkedInput();
 
     /**
      * Get the {@link OutputStream} used to write an entity
@@ -78,20 +79,20 @@ public interface NettyEntityWriter {
 
     /**
      * Get the length of the entity written to the {@link OutputStream}
-     * @return
+     * @return length of the entity.
      */
     long getLength();
 
     /**
-     * Return Type of
-     * @return
+     * Return Type of the {@link NettyEntityWriter}.
+     * @return type of the writer.
      */
     Type getType();
 
-    static NettyEntityWriter getInstance(ClientRequest clientRequest, Channel channel) {
+    static NettyEntityWriter getInstance(
+            ClientRequest clientRequest, Channel channel, Supplier<RequestEntityProcessing> requestEntityProcessingSupplier) {
         final long lengthLong = clientRequest.getLengthLong();
-        final RequestEntityProcessing entityProcessing = clientRequest.resolveProperty(
-                ClientProperties.REQUEST_ENTITY_PROCESSING, RequestEntityProcessing.class);
+        final RequestEntityProcessing entityProcessing = requestEntityProcessingSupplier.get();
 
         if ((entityProcessing == null && lengthLong == -1) || entityProcessing == RequestEntityProcessing.CHUNKED) {
             return new DirectEntityWriter(channel, Type.CHUNKED);
@@ -129,7 +130,7 @@ public interface NettyEntityWriter {
         }
 
         @Override
-        public ChunkedInput getChunkedInput() {
+        public ChunkedInput<ByteBuf> getChunkedInput() {
             return stream;
         }
 
@@ -203,7 +204,7 @@ public interface NettyEntityWriter {
         }
 
         @Override
-        public ChunkedInput getChunkedInput() {
+        public ChunkedInput<ByteBuf> getChunkedInput() {
             return writer.getChunkedInput();
         }
 
@@ -226,7 +227,7 @@ public interface NettyEntityWriter {
         private class DelayedOutputStream extends OutputStream {
             private final List<WriteAction> actions = new ArrayList<>();
             private int writeLen = 0;
-            private AtomicBoolean streamFlushed = new AtomicBoolean(false);
+            private final AtomicBoolean streamFlushed = new AtomicBoolean(false);
 
             @Override
             public void write(int b) throws IOException {

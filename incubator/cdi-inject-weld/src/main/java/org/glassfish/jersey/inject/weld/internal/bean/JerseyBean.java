@@ -173,7 +173,7 @@ public abstract class JerseyBean<T> implements Bean<T>, PassivationCapable {
 
     @Override
     public Class<?> getBeanClass() {
-        return Object.class;
+        return getClass();
     }
 
     @Override

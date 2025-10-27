@@ -38,6 +38,7 @@ module org.glassfish.jersey.media.moxy {
     opens org.glassfish.jersey.moxy.json.internal to
             org.glassfish.hk2.locator,
             org.glassfish.hk2.utilities,
+            org.glassfish.jersey.core.common,
             org.glassfish.jersey.core.client,
             org.glassfish.jersey.incubator.cdi.inject.weld,
             org.glassfish.jersey.inject.cdi2.se,

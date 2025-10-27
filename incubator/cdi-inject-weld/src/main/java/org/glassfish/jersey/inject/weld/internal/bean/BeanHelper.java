@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, 2024 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2021, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -149,8 +149,8 @@ public abstract class BeanHelper {
     public static <T> BindingBeanPair registerSupplier(RuntimeType runtimeType, SupplierClassBinding<T> binding,
             AfterBeanDiscovery abd, Collection<InjectionResolver> resolvers, BeanManager beanManager) {
 
-        Class<Supplier<T>> supplierClass = (Class<Supplier<T>>) binding.getSupplierClass();
-        AnnotatedType<Supplier<T>> annotatedType = beanManager.createAnnotatedType(supplierClass);
+        final Class<Supplier<T>> supplierClass = (Class<Supplier<T>>) binding.getSupplierClass();
+        final AnnotatedType<Supplier<T>> annotatedType = beanManager.createAnnotatedType(supplierClass);
         final InjectionTargetFactory<Supplier<T>> injectionTargetFactory = beanManager.getInjectionTargetFactory(annotatedType);
         final InjectionTarget<Supplier<T>> injectionTarget = injectionTargetFactory.createInjectionTarget(null);
 

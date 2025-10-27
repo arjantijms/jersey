@@ -73,6 +73,11 @@ public class NettyClientProperties {
     public static final String IDLE_CONNECTION_PRUNE_TIMEOUT = "jersey.config.client.idleConnectionPruneTimeout";
 
     /**
+     * Enable or disable the Netty logging by {@code LoggingHandler(Level.DEBUG)}. Disabled by default.
+     */
+    public static final String LOGGING_ENABLED = "jersey.config.client.netty.loggingEnabled";
+
+    /**
      *  <p>
      *    This property determines the maximum number of idle connections that will be simultaneously kept alive, per destination.
      *    The default is 5.
@@ -157,7 +162,8 @@ public class NettyClientProperties {
         DEFAULT_HEADER_SIZE = 8192;
 
     /**
-     * Parameter which allows extending of the initial line length for the Netty connector
+     * Parameter which allows extending of the first line length of the HTTP header for the Netty connector.
+     * Taken from {@link io.netty.handler.codec.http.HttpClientCodec#HttpClientCodec(int, int, int)}.
      *
      * @since 2.44
      */
@@ -166,12 +172,12 @@ public class NettyClientProperties {
 
     /**
      * Default initial line length for Netty Connector.
-     * Taken from {@link io.netty.handler.codec.http.HttpClientCodec#HttpClientCodec(int, int, int)}
+     * Typically, set this to the same value as {@link #MAX_HEADER_SIZE}.
      *
      * @since 2.44
      */
     public static final Integer
-        DEFAULT_INITIAL_LINE_LENGTH = 4096;
+        DEFAULT_INITIAL_LINE_LENGTH = 8192;
 
     /**
      * Parameter which allows extending of the chunk size for the Netty connector

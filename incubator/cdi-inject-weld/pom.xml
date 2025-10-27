@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.glassfish.jersey.incubator</groupId>
         <artifactId>project</artifactId>
-        <version>4.0.99-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>jersey-cdi-inject-weld</artifactId>
@@ -39,6 +39,7 @@
             --add-exports org.glassfish.jersey.incubator.cdi.inject.weld/org.glassfish.jersey.inject.weld.binder.client=weld.core.impl
             --add-exports org.glassfish.jersey.incubator.cdi.inject.weld/org.glassfish.jersey.inject.weld=weld.core.impl
             --add-opens org.glassfish.jersey.incubator.cdi.inject.weld/org.glassfish.jersey.inject.weld.binder.client=weld.core.impl
+            --add-opens org.glassfish.jersey.incubator.cdi.inject.weld/org.glassfish.jersey.inject.weld.internal.bean=weld.core.impl
         </surefire.security.argline>
     </properties>
 

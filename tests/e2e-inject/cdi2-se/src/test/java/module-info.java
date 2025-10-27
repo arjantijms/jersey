@@ -15,6 +15,8 @@
  */
 
 open module org.glassfish.jersey.tests.e2e.inject.cdi2.se.test {
+    requires jakarta.cdi;
+    requires jakarta.inject;
     requires jakarta.ws.rs;
     requires java.logging;
     requires org.glassfish.jersey.core.common;
@@ -22,6 +24,7 @@ open module org.glassfish.jersey.tests.e2e.inject.cdi2.se.test {
     requires org.glassfish.jersey.tests.framework.core;
     requires org.junit.jupiter.api;
     requires org.glassfish.jersey.tests.e2e.inject.cdi2.se.main;
+    requires weld.api;
 
     exports org.glassfish.jersey.tests.e2e.inject.cdi.se.test;
     exports org.glassfish.jersey.tests.e2e.inject.cdi.se.test.subresources;

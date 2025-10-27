@@ -25,6 +25,7 @@ module org.glassfish.jersey.tests.e2e.inject.cdi2.se.main {
     requires weld.core.impl;
 
     exports org.glassfish.jersey.tests.e2e.inject.cdi.se;
+    exports org.glassfish.jersey.tests.e2e.inject.cdi.se.j6000;
     exports org.glassfish.jersey.tests.e2e.inject.cdi.se.scopes;
     exports org.glassfish.jersey.tests.e2e.inject.cdi.se.subresources;
 
@@ -36,4 +37,5 @@ module org.glassfish.jersey.tests.e2e.inject.cdi2.se.main {
             org.glassfish.jersey.inject.cdi2.se,
             weld.core.impl;
     opens org.glassfish.jersey.tests.e2e.inject.cdi.se.subresources to weld.core.impl;
+    opens org.glassfish.jersey.tests.e2e.inject.cdi.se.j6000 to weld.core.impl;
 }
