@@ -37,6 +37,7 @@ module org.glassfish.jersey.core.server {
     exports org.glassfish.jersey.server;
     exports org.glassfish.jersey.server.filter;
     exports org.glassfish.jersey.server.filter.internal to
+            org.glassfish.jersey.core.common,
             org.glassfish.hk2.locator,
             org.glassfish.hk2.utilities,
             org.glassfish.jersey.incubator.cdi.inject.weld;
