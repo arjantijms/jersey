@@ -37,6 +37,7 @@ public class ManifestTest {
             "servlet-portability", /* obsolete */
             "helidon-connector", /* Helidon does not contain OSGi headers */
             "grizzly-connector", /* Limited maintenance */
+            "jersey-constants"   /* Constants do not contain OSGi headers */
     };
 
     @Test
