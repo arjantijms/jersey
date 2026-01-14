@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 2012, 2024 Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2018 Payara Foundation and/or its affiliates.
  *
@@ -425,11 +426,20 @@ public class ClientConfig implements Configurable<ClientConfig>, ExtendedConfig 
 
             injectionManager.completeRegistration();
 
-            bootstrapConfigurators.forEach(configurator -> configurator.postInit(injectionManager, preInit.bootstrapBag));
+            bootstrapConfigurators.forEach(configurator -> {
+                if (!configurator.equals(preInit.clientComponentConfigurator)) {
+                    configurator.postInit(injectionManager, preInit.bootstrapBag);
+                }
+            });
+
 
             final ClientConfig configuration = new ClientConfig(runtimeCfgState);
             final Connector connector = connectorProvider.getConnector(client, configuration);
             final ClientRuntime crt = new ClientRuntime(configuration, connector, injectionManager, preInit.bootstrapBag);
+
+            // We call postInit here to clean up thread locals,
+            // while other configurators need to be postInit earlier because they set up dependencies for ClientRuntime
+            preInit.clientComponentConfigurator.postInit(injectionManager, preInit.bootstrapBag);
 
             client.registerShutdownHook(crt);
             preInit.messageBodyWorkersConfigurator.setClientRuntime(crt);
@@ -479,6 +489,7 @@ public class ClientConfig implements Configurable<ClientConfig>, ExtendedConfig 
         private final ClientBootstrapBag bootstrapBag;
         private final List<BootstrapConfigurator> bootstrapConfigurators;
         private final ClientMessageBodyFactory.MessageBodyWorkersConfigurator messageBodyWorkersConfigurator;
+        private final ClientComponentConfigurator clientComponentConfigurator;
 
         /* package */ PreInitialization(InjectionManager injectionManager) {
             this(new State(new JerseyClient()), injectionManager, null, null);
@@ -496,9 +507,9 @@ public class ClientConfig implements Configurable<ClientConfig>, ExtendedConfig 
             bootstrapBag.setManagedObjectsFinalizer(new ManagedObjectsFinalizer(injectionManager));
 
             messageBodyWorkersConfigurator = new ClientMessageBodyFactory.MessageBodyWorkersConfigurator(); // 2020
+            clientComponentConfigurator = new ClientComponentConfigurator();
 
-            bootstrapConfigurators = Arrays.asList(
-                    new RequestScope.RequestScopeConfigurator(),
+            bootstrapConfigurators = Arrays.asList(new RequestScope.RequestScopeConfigurator(),
                     new ParamConverterConfigurator(), // 2010
                     new ParameterUpdaterConfigurator(), // 2011
                     new RuntimeConfigConfigurator(runtimeCfgState), // 2012
@@ -507,7 +518,7 @@ public class ClientConfig implements Configurable<ClientConfig>, ExtendedConfig 
                     new ExceptionMapperFactory.ExceptionMappersConfigurator(), // 2015
                     new JaxrsProviders.ProvidersConfigurator(), // 2016
                     new AutoDiscoverableConfigurator(RuntimeType.CLIENT),
-                    new ClientComponentConfigurator(),
+                    clientComponentConfigurator,
                     new FeatureConfigurator(RuntimeType.CLIENT));
             bootstrapConfigurators.forEach(configurator -> configurator.init(injectionManager, bootstrapBag));
 
