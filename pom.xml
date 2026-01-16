@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-
+    Copyright 2026 Contributors to the Eclipse Foundation.
     Copyright (c) 2010, 2025 Oracle and/or its affiliates. All rights reserved.
 
     This program and the accompanying materials are made available under the
@@ -1380,12 +1380,13 @@
                     <plugin>
                         <groupId>org.sonatype.central</groupId>
                         <artifactId>central-publishing-maven-plugin</artifactId>
-                        <version>0.8.0</version>
+                        <version>0.10.0</version>
                         <extensions>true</extensions>
                         <configuration>
                             <publishingServerId>central</publishingServerId>
+                            <centralSnapshotsUrl>https://central.sonatype.com/repository/maven-snapshots</centralSnapshotsUrl>
                             <autoPublish>false</autoPublish>
-                            <!-- waitUntil>published</waitUntil -->
+                            <deploymentName>Eclipse Jersey ${project.version}</deploymentName>
                         </configuration>
                     </plugin>
                 </plugins>
