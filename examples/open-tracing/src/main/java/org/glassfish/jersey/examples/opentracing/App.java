@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 2017, 2022 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -10,10 +11,12 @@
 
 package org.glassfish.jersey.examples.opentracing;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import io.jaegertracing.Configuration;
+import io.jaegertracing.Configuration.ReporterConfiguration;
+import io.jaegertracing.Configuration.SamplerConfiguration;
+import io.jaegertracing.Configuration.SenderConfiguration;
+import io.opentracing.Span;
+import io.opentracing.util.GlobalTracer;
 
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -22,20 +25,18 @@ import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.opentracing.OpenTracingFeature;
 import org.glassfish.jersey.opentracing.OpenTracingUtils;
 import org.glassfish.jersey.server.ResourceConfig;
 
-import org.glassfish.grizzly.http.server.HttpServer;
-
-import com.uber.jaeger.Configuration;
-
-import io.opentracing.Span;
-import io.opentracing.util.GlobalTracer;
-
 /**
- * Open tracing example application.
  * <p>
  * Exposes OpenTracing-enabled REST application (with Jaeger registered as the Tracer)
  * and invokes one request from (also OpenTracing-enabled) Jersey client.
@@ -89,18 +90,17 @@ public class App {
      * Configures Jaeger tracer as the {@link GlobalTracer}.
      */
     private static void prepare() {
-        GlobalTracer.register(
-                new com.uber.jaeger.Configuration(
-                        "OpenTracingTemporaryTest",
-                        new Configuration.SamplerConfiguration("const", 1),
-                        new Configuration.ReporterConfiguration(
-                                true,
-                                "localhost",
-                                5775,
-                                1000,
-                                10000)
-                ).getTracer()
-        );
+        SamplerConfiguration sampler = new SamplerConfiguration().withType("const").withParam(1);
+        SenderConfiguration sender = new SenderConfiguration().withAgentHost("localhost").withAgentPort(5775);
+        ReporterConfiguration reporter = new ReporterConfiguration()
+            .withLogSpans(true)
+            .withFlushInterval(1000)
+            .withMaxQueueSize(10000)
+            .withSender(sender);
+        Configuration configuration = new Configuration("OpenTracingTemporaryTest")
+            .withSampler(sampler)
+            .withReporter(reporter);
+        GlobalTracer.registerIfAbsent(configuration.getTracer());
     }
 
     /**

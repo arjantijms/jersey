@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-
+    Copyright 2026 Contributors to the Eclipse Foundation.
     Copyright (c) 2010, 2025 Oracle and/or its affiliates. All rights reserved.
 
     This program and the accompanying materials are made available under the
@@ -2197,11 +2197,8 @@
         <groovy.version>5.0.0-alpha-12</groovy.version>
         <gson.version>2.13.1</gson.version>
 
-        <!--versions, extracted here due to maven-enforcer-plugin -->
-        <!--        <commons.codec.version>1.15</commons.codec.version>-->
-        <com.uber.jaeger.version>0.27.0</com.uber.jaeger.version>
+        <jaeger.version>1.8.1</jaeger.version>
         <org.codehaus.gmavenplus.version>4.2.0</org.codehaus.gmavenplus.version>
-        <!-- end of versions extracted here due to maven-enforcer-plugin -->
 
         <!-- micrometer -->
         <micrometer.version>1.15.1</micrometer.version>
