@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 2017, 2022 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -107,7 +108,7 @@ class OpenTracingApplicationEventListener implements ApplicationEventListener {
 
     class OpenTracingRequestEventListener implements RequestEventListener {
         private Span requestSpan;
-        private Span resourceSpan = null;
+        private Span resourceSpan;
 
         OpenTracingRequestEventListener(final Span requestSpan) {
             this.requestSpan = requestSpan;
@@ -171,7 +172,9 @@ class OpenTracingApplicationEventListener implements ApplicationEventListener {
                     // processing; resourceSpan will be finished and the span in the context will be switched back to the
                     // resource span before any further tracing can occur.
                     event.getContainerRequest().setProperty(OpenTracingFeature.SPAN_CONTEXT_PROPERTY, requestSpan);
-                    resourceSpan.finish();
+                    if (resourceSpan != null) {
+                        resourceSpan.finish();
+                    }
                     logVerbose(LocalizationMessages.OPENTRACING_LOG_RESPONSE_FILTERING_STARTED());
                     break;
 
@@ -224,6 +227,11 @@ class OpenTracingApplicationEventListener implements ApplicationEventListener {
                         }
                         requestSpan.finish();
                     }
+                    break;
+                case START:
+                    // This is already handled in onRequest
+                    break;
+                default:
                     break;
             }
         }
