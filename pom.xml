@@ -46,8 +46,8 @@
     </issueManagement>
 
     <ciManagement>
-        <system>Hudson</system>
-        <url>http://hudson.glassfish.org/job/Jersey-trunk-multiplatform/</url>
+        <system>Jenkins</system>
+        <url>https://ci.eclipse.org/jersey</url>
     </ciManagement>
 
     <repositories>
