@@ -27,6 +27,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>jersey-4697</artifactId>
+    <name>jersey-4697</name>
 
     <dependencies>
         <dependency>

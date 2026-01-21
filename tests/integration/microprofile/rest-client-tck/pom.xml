@@ -28,6 +28,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>jersey-rest-client-tck</artifactId>
+    <name>jersey-rest-client-tck</name>
 
     <dependencies>
         <dependency>

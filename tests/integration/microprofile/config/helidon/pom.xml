@@ -28,6 +28,8 @@
 
     <artifactId>helidon-config-webapp</artifactId>
     <packaging>war</packaging>
+    
+    <name>helidon-config-webapp</name>
 
     <dependencies>
         <dependency>

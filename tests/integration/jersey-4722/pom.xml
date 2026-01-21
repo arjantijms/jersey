@@ -34,6 +34,7 @@
     </description>
 
     <artifactId>jersey-4722</artifactId>
+    <name>jersey-4722</name>
 
     <dependencies>
         <dependency>

@@ -28,6 +28,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>e2e-inject-noninject</artifactId>
+    <name>e2e-inject-noninject</name>
 
     <dependencies>
         <dependency>

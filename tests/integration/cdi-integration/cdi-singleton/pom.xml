@@ -28,6 +28,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>cdi-singleton</artifactId>
+    <name>cdi-singleton</name>
 
     <dependencies>
         <dependency>
