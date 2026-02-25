@@ -41,13 +41,13 @@ aopalliance Version 1
 * Project: http://aopalliance.sourceforge.net
 * Copyright: Material in the public domain is not protected by copyright
 
-Bean Validation API 3.1.0
+Bean Validation API 4.0.0-M1
 * License: Apache License, 2.0
-* Project: https://projects.eclipse.org/projects/ee4j.bean-validation
+* Project: https://projects.eclipse.org/projects/ee4j.validation
 * Copyright: 2009, Red Hat, Inc. and/or its affiliates, and individual contributors
 * by the @authors tag.
 
-Hibernate Validator CDI, 8.0.2.Final
+Hibernate Validator CDI, 9.1.0.Final-ee12patch1
 * License: Apache License, 2.0
 * Project: https://beanvalidation.org/
 * Repackaged in org.glassfish.jersey.server.validation.internal.hibernate

@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <!--
 
+    Copyright (c) 2026 Contributors to Eclipse Foundation.
     Copyright (c) 2012, 2025 Oracle and/or its affiliates. All rights reserved.
     Copyright (c) 2018, 2019 Payara Foundation and/or its affiliates. All rights reserved.
 
@@ -100,8 +101,8 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>jakarta.enterprise</groupId>
-            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <groupId>jakarta.cdi</groupId>
+            <artifactId>jakarta.cdi-api</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -130,6 +131,10 @@
                 </exclusion>
             </exclusions>
         </dependency>
+         <dependency>
+                <groupId>com.fasterxml</groupId>
+                <artifactId>classmate</artifactId>
+            </dependency>
         <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging</artifactId>
