@@ -714,27 +714,6 @@
                     <version>${gfembedded.mvn.plugin.version}</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.glassfish.copyright</groupId>
-                    <artifactId>glassfish-copyright-maven-plugin</artifactId>
-                    <configuration>
-                        <excludeFile>etc/config/copyright-exclude</excludeFile>
-                        <!--svn|mercurial|git - defaults to svn-->
-                        <scm>git</scm>
-                        <!-- turn on/off debugging -->
-                        <debug>false</debug>
-                        <!-- skip files not under SCM-->
-                        <scmOnly>true</scmOnly>
-                        <!-- turn off warnings -->
-                        <warn>false</warn>
-                        <!-- for use with repair -->
-                        <update>false</update>
-                        <!-- check that year is correct -->
-                        <ignoreYear>false</ignoreYear>
-                        <templateFile>etc/config/copyright.txt</templateFile>
-                        <bsdTemplateFile>etc/config/edl-copyright.txt</bsdTemplateFile>
-                    </configuration>
-                </plugin>
-                <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
                     <version>${felix.mvn.plugin.version}</version>
