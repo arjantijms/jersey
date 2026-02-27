@@ -1818,12 +1818,6 @@
                 <groupId>org.eclipse.persistence</groupId>
                 <artifactId>org.eclipse.persistence.moxy</artifactId>
                 <version>${moxy.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.eclipse.angus</groupId>
-                        <artifactId>angus-mail</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <dependency>
