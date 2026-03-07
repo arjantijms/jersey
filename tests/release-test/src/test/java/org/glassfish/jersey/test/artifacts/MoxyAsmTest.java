@@ -23,6 +23,10 @@ import org.junit.Test;
 import static org.glassfish.jersey.test.artifacts.MavenUtil.getModelFromFile;
 import static org.junit.Assert.assertEquals;
 
+// We test that org.ow2.asm:asm and org.eclipse.persistence:org.eclipse.persistence.asm are to some degree
+// equal.
+//
+// It's not exactly clear what the tolerance is, and why we are checking this.
 public class MoxyAsmTest {
 
     @Test
@@ -36,8 +40,11 @@ public class MoxyAsmTest {
 
         Model projectPom = MavenUtil.getModelFromFile("../../pom.xml");
 
-        String asmVersion = projectPom.getProperties().getProperty("asm.version");
-        String moxyAsmVersion = findVersionInModel(moxyAsmDependency.getVersion(), projectPom);
+        // org.ow2.asm:asm can be 9.9 or 9.9.1
+        String asmVersion = projectPom.getProperties().getProperty("asm.version").substring(0, 4);
+
+        // org.eclipse.persistence:org.eclipse.persistence.asm can be 9.7.1, 9.8.0, 9.9.1
+        String moxyAsmVersion = findVersionInModel(moxyAsmDependency.getVersion(), projectPom).substring(0, 4);
 
         assertEquals(
             "org.eclipse.persistence.asm version " + moxyAsmVersion
