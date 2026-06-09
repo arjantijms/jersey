@@ -2308,7 +2308,7 @@
         <rxjava2.version>2.2.21</rxjava2.version>
 
         <servlet4.version>4.0.4</servlet4.version>
-        <servlet6.version>6.2.0-M1</servlet6.version>
+        <servlet6.version>6.2.0-M2</servlet6.version>
 
         <slf4j.version>2.0.17</slf4j.version>
         <spring6.version>6.2.11</spring6.version>
@@ -2329,9 +2329,9 @@
         <cdi.api.version>5.0.0.Alpha3</cdi.api.version>
         <cdi.osgi.version>jakarta.enterprise.*;version="[4.0,6)"</cdi.osgi.version>
         <ejb.version>4.0.1</ejb.version>
-        <grizzly2.version>5.0.0</grizzly2.version>
+        <grizzly2.version>5.0.2</grizzly2.version>
         <grizzly.client.version>1.16</grizzly.client.version>
-        <grizzly.npn.version>2.0.0</grizzly.npn.version>
+        <grizzly.npn.version>2.0.1</grizzly.npn.version>
         <hk2.version>4.0.0-M3</hk2.version>
         <hk2.osgi.version>org.glassfish.hk2.*;version="[4.0,5)"</hk2.osgi.version>
         <hk2.jvnet.osgi.version>org.jvnet.hk2.*;version="[4.0,5)"</hk2.jvnet.osgi.version>
@@ -2342,13 +2342,13 @@
         <istack.commons.runtime.version>4.2.0</istack.commons.runtime.version>
         <jakarta.activation-api.version>2.2.0-M1</jakarta.activation-api.version>
         <jakarta.activation.version>2.1.0-M1</jakarta.activation.version>
-        
+
         <!-- org.hibernate.validator has lookup limitation up to the 6 version of EL API-->
-        <jakarta.el.version>6.1.0-M1</jakarta.el.version> <!-- el6 does not work with OSGi with expressly 5 -->
-        
+        <jakarta.el.version>6.1.0-M2</jakarta.el.version> <!-- el6 does not work with OSGi with expressly 5 -->
+
         <!-- org.hibernate.validator has lookup limitation up to the 6 version of EL IMPL -->
         <jakarta.el.impl.version>6.0.0</jakarta.el.impl.version> <!-- EE11 expressly 6 does not work with EE10 BV 8.0.1 (OSGi) -->
-        
+
         <jakarta.annotation.osgi.version>jakarta.annotation.*;version="[3.0,4)"</jakarta.annotation.osgi.version>
         <jakarta.annotation.version>3.0.0</jakarta.annotation.version>
         <jakarta.decorator.osgi.version>jakarta.decorator.*;version="[4.0,5)"</jakarta.decorator.osgi.version> <!-- CDI -->
@@ -2380,7 +2380,7 @@
 
         <!-- Do not autopublish by default -->
         <release.autopublish>false</release.autopublish>
-        
+
         <!-- By default block until everything is really published -->
         <release.waitUntil>published</release.waitUntil>
     </properties>
