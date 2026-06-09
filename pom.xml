@@ -2308,7 +2308,7 @@
         <rxjava2.version>2.2.21</rxjava2.version>
 
         <servlet4.version>4.0.4</servlet4.version>
-        <servlet6.version>6.2.0-M1</servlet6.version>
+        <servlet6.version>6.2.0-M2</servlet6.version>
 
         <slf4j.version>2.0.17</slf4j.version>
         <spring6.version>6.2.11</spring6.version>
